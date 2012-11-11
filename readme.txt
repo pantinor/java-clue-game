@@ -1,26 +1,39 @@
+#####################
 Instructions:
 
+After running "mvn install", extract the zip file in the target directory and execute the jar file with the java executor.  
+Java runs the main class from the jar from the manifest, and game should start up.  
+ie Double click on the jar and see if it runs automatically.
+If running in the eclipse IDE, then run the ClueMain java class as the application.
+
+
+#####################
 Single Player Mode:  
 
-Not much to say here.  Just pick the number of computer controlled players and yourself and try it out.
+Not much to say here.  Just pick the number of computer controlled players and your player and try it out.
 
+
+######################
 Multi Player Mode:
 
 You have to get the smart fox server installed and running.
 Here are some details to run it.
 
-Drop the zone xml file into the zones dir of 
+Drop the zone xml file (Clue.zone.xml) into the zones directory of your SFS2X installation.
+
 Add the "clue" extension in SFS2X server like this :
 
 C:\Program Files\SFS2X-RC1a\SFS2X\extensions\clue
 
-Add the clue jar to this directory.
+Add the clue jar to this directory. For example:
 
-For example:
 C:\Program Files\SFS2X-RC1a\SFS2X\extensions\clue\clue-game-1.0.1.jar
 
-Start up the server and the Clue game zone should become active.  There is an SFS admin GUI to login and see some details of the zone.
+Start up the server and the Clue game zone should become active.  
+There is an SFS admin GUI to login and see some details of the zone.
 
+
+##################################
 Maven Project Compile Dependencies:
 
 Unfortunately, Smart Fox Server dependencies are not available in any public maven repository.  It is not an open source project.

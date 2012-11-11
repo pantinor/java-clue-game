@@ -41,6 +41,12 @@
 			<artifactId>sfs2x-server</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.gotoandplay.smartfoxclient</groupId>
+			<artifactId>xmlsocket</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -83,14 +89,6 @@
 			<artifactId>nanoxml</artifactId>
 			<version>2.2.3</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.gotoandplay.smartfoxclient</groupId>
-			<artifactId>xmlsocket</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-
-
 
 		<dependency>
 			<groupId>org.swinglabs</groupId>

@@ -1,0 +1,15 @@
+<SmartFoxConfig>
+	<ip>127.0.0.1</ip>
+	<udpIp>127.0.0.1</udpIp>
+	<port>9933</port>
+	<udpPort>9933</udpPort>
+	<zone>Clue</zone>
+
+	<debug>true</debug>
+
+	<httpPort>8080</httpPort>
+
+	<useBlueBox>true</useBlueBox>
+	<blueBoxPollingRate>700</blueBoxPollingRate>
+
+</SmartFoxConfig>

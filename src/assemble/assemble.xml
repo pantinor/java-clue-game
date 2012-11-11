@@ -1,0 +1,39 @@
+<assembly>
+	<id>bin</id>
+
+	<formats>
+		<format>zip</format>
+	</formats>
+
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputDirectory>lib</outputDirectory>
+			<unpack>false</unpack>
+		</dependencySet>
+	</dependencySets>
+
+	<fileSets>
+
+		<!-- fileSet>
+			<directory>${project.build.directory}/classes</directory>
+			<outputDirectory>resources</outputDirectory>
+			<includes>
+				<include>*.jpg</include>
+				<include>*.png</include>				
+				<include>*.wav</include>
+				<include>*.xml</include>
+				<include>*.template</include>
+			</includes>
+		</fileSet-->
+
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<outputDirectory></outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		
+	</fileSets>
+</assembly>

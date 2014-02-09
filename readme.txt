@@ -1,3 +1,8 @@
+First game that I wrote a few years ago.  
+Don't ask me why I chose the smart fox server API for the multiplayer option, crazy!
+
+![screenshot of the example](https://raw.github.com/pantinor/java-clue-game/master/preview.png)
+
 #####################
 Instructions:
 
@@ -67,3 +72,5 @@ I added them in this projects maven resources - third party directory, but lates
 
 
 Author: Paul Antinori (pantinor@gmail.com)
+
+

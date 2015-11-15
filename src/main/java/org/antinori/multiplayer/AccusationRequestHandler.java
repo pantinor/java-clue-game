@@ -12,41 +12,36 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
-
-
 public class AccusationRequestHandler extends BaseClientRequestHandler {
 
-	public void handleClientRequest(User sender, ISFSObject params) {
-		
-		trace("ClueGameExtension AccusationRequestHandler got sender: " + sender);
+    public void handleClientRequest(User sender, ISFSObject params) {
 
-		
-		int suspectId = params.getInt("suspect");
-		int weaponId = params.getInt("weapon");
-		int roomId = params.getInt("room");
+        trace("ClueGameExtension AccusationRequestHandler got sender: " + sender);
 
-		Room room = sender.getLastJoinedRoom();
-		
-		RoomVariable rv = room.getVariable("deck");
-		Clue deck = (Clue)rv.getSFSObjectValue();	
-		
-		boolean validAccusation = deck.matchesVictimSet(suspectId,weaponId,roomId);
+        int suspectId = params.getInt("suspect");
+        int weaponId = params.getInt("weapon");
+        int roomId = params.getInt("room");
 
-		params.putBool("valid", validAccusation);
-		params.putUtfString("accusingPlayer", sender.getName());
-		
-		//send the suggestion to all other players
-		List<User> users = room.getUserList();
-		send("accusation", params, users);
-		
-		if (validAccusation) {
-			ISFSObject resObj = SFSObject.newInstance();
-			resObj.putUtfString("message", "Game is over because a valid accusation was made. The winner is " + sender.getName());
-			send("gameOver", resObj, users);
-		}
-		
+        Room room = sender.getLastJoinedRoom();
 
-	}
-	
+        RoomVariable rv = room.getVariable("deck");
+        Clue deck = (Clue) rv.getSFSObjectValue();
+
+        boolean validAccusation = deck.matchesVictimSet(suspectId, weaponId, roomId);
+
+        params.putBool("valid", validAccusation);
+        params.putUtfString("accusingPlayer", sender.getName());
+
+        //send the suggestion to all other players
+        List<User> users = room.getUserList();
+        send("accusation", params, users);
+
+        if (validAccusation) {
+            ISFSObject resObj = SFSObject.newInstance();
+            resObj.putUtfString("message", "Game is over because a valid accusation was made. The winner is " + sender.getName());
+            send("gameOver", resObj, users);
+        }
+
+    }
 
 }

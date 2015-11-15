@@ -9,17 +9,13 @@ import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
 
 public class JoinRoomRequestHandler extends BaseServerEventHandler {
 
-	public void handleServerEvent(ISFSEvent event) throws SFSException {
-		Room room = (Room) event.getParameter(SFSEventParam.ROOM);
-		User user = (User) event.getParameter(SFSEventParam.USER);
+    public void handleServerEvent(ISFSEvent event) throws SFSException {
+        Room room = (Room) event.getParameter(SFSEventParam.ROOM);
+        User user = (User) event.getParameter(SFSEventParam.USER);
 
-		trace("ClueGameExtension JoinRoomEventHandler got room: " + room);
-		trace("ClueGameExtension JoinRoomEventHandler got user: " + user);
+        trace("ClueGameExtension JoinRoomEventHandler got room: " + room);
+        trace("ClueGameExtension JoinRoomEventHandler got user: " + user);
 
-
-
-		
-
-	}
+    }
 
 }

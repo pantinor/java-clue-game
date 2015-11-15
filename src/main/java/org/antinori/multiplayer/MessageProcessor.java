@@ -5,31 +5,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageProcessor {
-	private static final String[] emotesCodes = { ":\\)", "\\;\\)", ":\\(", "\\(\\)\\]", "\\(brb\\)", "\\;\\(", "8\\)", ":D", "&lt\\;3", "\\(sfs\\)", };
 
-	private static final String[] emotesFileNames = { "smile.png", "wink.png", "sad.png", "beer.png", "brb.png", "crying.png", "cool.png", "laugh.png", "love.png", "sfs.png" };
+    private static final String[] emotesCodes = {":\\)", "\\;\\)", ":\\(", "\\(\\)\\]", "\\(brb\\)", "\\;\\(", "8\\)", ":D", "&lt\\;3", "\\(sfs\\)",};
 
-	private static final Map<String, String> emotesURL;
+    private static final String[] emotesFileNames = {"smile.png", "wink.png", "sad.png", "beer.png", "brb.png", "crying.png", "cool.png", "laugh.png", "love.png", "sfs.png"};
 
-	static {
-		emotesURL = new HashMap<String, String>();
-		URL emoteURL;
+    private static final Map<String, String> emotesURL;
 
-		for (int i = 0; i < emotesCodes.length; i++) {
-			emoteURL = MessageProcessor.class.getClassLoader().getResource(emotesFileNames[i]);
-			if (emoteURL != null) {
-				emotesURL.put(emotesCodes[i], emoteURL.toString());
-			}
-		}
-	}
+    static {
+        emotesURL = new HashMap<String, String>();
+        URL emoteURL;
 
-	public static String parseSmiles(String message) {
-		String msg = message;
+        for (int i = 0; i < emotesCodes.length; i++) {
+            emoteURL = MessageProcessor.class.getClassLoader().getResource(emotesFileNames[i]);
+            if (emoteURL != null) {
+                emotesURL.put(emotesCodes[i], emoteURL.toString());
+            }
+        }
+    }
 
-		for (String smile : emotesURL.keySet()) {
-			msg = msg.replaceAll(smile, "<img src='" + emotesURL.get(smile) + "' alt='" + smile + "'>");
-		}
+    public static String parseSmiles(String message) {
+        String msg = message;
 
-		return msg;
-	}
+        for (String smile : emotesURL.keySet()) {
+            msg = msg.replaceAll(smile, "<img src='" + emotesURL.get(smile) + "' alt='" + smile + "'>");
+        }
+
+        return msg;
+    }
 }

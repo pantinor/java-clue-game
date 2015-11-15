@@ -12,25 +12,26 @@ import javax.swing.ListCellRenderer;
  * User list custom ListCellRenderer.
  */
 public class UserListCellRenderer extends JLabel implements ListCellRenderer {
-	public UserListCellRenderer() {
-		setOpaque(true);
-	}
 
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		User user = (User) value;
+    public UserListCellRenderer() {
+        setOpaque(true);
+    }
 
-		if (isSelected) {
-			setBackground(list.getSelectionBackground());
-			setForeground(list.getSelectionForeground());
-		} else {
-			setBackground(list.getBackground());
-			setForeground(list.getForeground());
-		}
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        User user = (User) value;
 
-		UserVariable ch = user.getVariable("character");
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            setForeground(list.getSelectionForeground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
 
-		setText(user.getName() + " (" + (ch == null ? "none" : ch.getStringValue()) + ") ");
+        UserVariable ch = user.getVariable("character");
 
-		return this;
-	}
+        setText(user.getName() + " (" + (ch == null ? "none" : ch.getStringValue()) + ") ");
+
+        return this;
+    }
 }

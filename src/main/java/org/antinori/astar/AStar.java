@@ -43,7 +43,7 @@ public class AStar<T extends Node<T>> extends AbstractPathFinder<T> {
         }
 
         public int compareTo(State other) {
-            return (int)(totalCost() - other.totalCost());
+            return (int) (totalCost() - other.totalCost());
         }
 
     }

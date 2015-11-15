@@ -10,23 +10,24 @@ import javax.swing.ListCellRenderer;
  * Room list custom ListCellRenderer.
  */
 public class RoomListCellRenderer extends JLabel implements ListCellRenderer {
-	public RoomListCellRenderer() {
-		setOpaque(true);
-	}
 
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		Room room = (Room) value;
+    public RoomListCellRenderer() {
+        setOpaque(true);
+    }
 
-		if (isSelected) {
-			setBackground(list.getSelectionBackground());
-			setForeground(list.getSelectionForeground());
-		} else {
-			setBackground(list.getBackground());
-			setForeground(list.getForeground());
-		}
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Room room = (Room) value;
 
-		setText(room.getName());// + "(" + room.getUserCount() + "/" + room.getMaxUsers() + ")");
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            setForeground(list.getSelectionForeground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
 
-		return this;
-	}
+        setText(room.getName());// + "(" + room.getUserCount() + "/" + room.getMaxUsers() + ")");
+
+        return this;
+    }
 }

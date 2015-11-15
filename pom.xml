@@ -1,173 +1,249 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.antinori</groupId>
-	<artifactId>clue-game</artifactId>
-	<version>1.0.1</version>
+    <groupId>org.antinori</groupId>
+    <artifactId>clue-game</artifactId>
+    <version>1.0.1</version>
+    
+    <dependencies>
 
+        <dependency>
+            <groupId>smartfox</groupId>
+            <artifactId>sfs2x-client-core</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>smartfox</groupId>
+            <artifactId>sfs2x-api</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 
-	<dependencies>
-
-
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-			<version>3.2.2.Final</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.gotoandplay.smartfoxclient.sfs2x</groupId>
-			<artifactId>sfs2x-client-core</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.gotoandplay.smartfoxclient.sfs2x</groupId>
-			<artifactId>sfs2x-api</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.gotoandplay.smartfoxclient.sfs2x</groupId>
-			<artifactId>sfs2x-server</artifactId>
-			<version>1.0.1</version>
-		</dependency>
+        <dependency>
+            <groupId>smartfox</groupId>
+            <artifactId>sfs2x-server</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 		
-		<dependency>
-			<groupId>org.gotoandplay.smartfoxclient</groupId>
-			<artifactId>xmlsocket</artifactId>
-			<version>1.0.1</version>
-		</dependency>
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0-rc5</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.6.1</version>
-		</dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swingx-core</artifactId>
+            <version>1.6.2-2</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0-rc5</version>
-		</dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
+            <version>1.0.3</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20090211</version>
-		</dependency>
+        <dependency>
+            <groupId>org.jdesktop</groupId>
+            <artifactId>appframework</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
 
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.mina</groupId>
-			<artifactId>mina-core</artifactId>
-			<version>1.1.7</version>
-		</dependency>
-
-		<dependency>
-			<groupId>be.cyberelf.nanoxml</groupId>
-			<artifactId>nanoxml</artifactId>
-			<version>2.2.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.swinglabs</groupId>
-			<artifactId>swingx-core</artifactId>
-			<version>1.6.2-2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.swinglabs</groupId>
-			<artifactId>swing-layout</artifactId>
-			<version>1.0.3</version>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.2.2.Final</version>
+        </dependency>
 
 
-		<dependency>
-			<groupId>org.jdesktop</groupId>
-			<artifactId>appframework</artifactId>
-			<version>1.0.3</version>
-		</dependency>
-
-	</dependencies>
+    </dependencies>
 
 
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<!-- includes>
-						<include>**/org/**/*.class</include>
-					</includes-->
-					<archive>
-						<index>true</index>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
+    <build>
+        <plugins>
+            <!--plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>install-in-repo-dep1</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>mvn</executable>
+                            <arguments>
+                                <argument>install:install-file</argument>
+                                <argument>-Dfile=${basedir}/src/main/resources/smartfox/sfs2x-client-core-1.0.1.jar</argument>
+                                <argument>-DgroupId=smartfox</argument>
+                                <argument>-DartifactId=sfs2x-client-core</argument>
+                                <argument>-Dversion=1.0.1</argument>
+                                <argument>-Dpackaging=jar</argument>
+                                <argument>-DgeneratePom=true</argument>
+                                <argument>-DcreateChecksum=true</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-in-repo-dep2</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>mvn</executable>
+                            <arguments>
+                                <argument>install:install-file</argument>
+                                <argument>-Dfile=${basedir}/src/main/resources/smartfox/sfs2x-server-1.0.1.jar</argument>
+                                <argument>-DgroupId=smartfox</argument>
+                                <argument>-DartifactId=sfs2x-server</argument>
+                                <argument>-Dversion=1.0.1</argument>
+                                <argument>-Dpackaging=jar</argument>
+                                <argument>-DgeneratePom=true</argument>
+                                <argument>-DcreateChecksum=true</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-in-repo-dep3</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>mvn</executable>
+                            <arguments>
+                                <argument>install:install-file</argument>
+                                <argument>-Dfile=${basedir}/src/main/resources/smartfox/sfs2x-api-1.0.1.jar</argument>
+                                <argument>-DgroupId=smartfox</argument>
+                                <argument>-DartifactId=sfs2x-api</argument>
+                                <argument>-Dversion=1.0.1</argument>
+                                <argument>-Dpackaging=jar</argument>
+                                <argument>-DgeneratePom=true</argument>
+                                <argument>-DcreateChecksum=true</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin-->
+    
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>smartfox:sfs2x-client-core</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>install-file</goal>                        
+                        </goals>
+                        <configuration>
+                            <groupId>smartfox</groupId>
+                            <artifactId>sfs2x-client-core</artifactId>
+                            <version>1.0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${basedir}/src/main/resources/smartfox/sfs2x-client-core-1.0.1.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>smartfox:sfs2x-server</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>install-file</goal>                        
+                        </goals>
+                        <configuration>
+                            <groupId>smartfox</groupId>
+                            <artifactId>sfs2x-server</artifactId>
+                            <version>1.0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${basedir}/src/main/resources/smartfox/sfs2x-server-1.0.1.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>smartfox:sfs2x-api</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>install-file</goal>                        
+                        </goals>
+                        <configuration>
+                            <groupId>smartfox</groupId>
+                            <artifactId>sfs2x-api</artifactId>
+                            <version>1.0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${basedir}/src/main/resources/smartfox/sfs2x-api-1.0.1.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>org.antinori.game.ClueMain</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assemble/assemble.xml</descriptor>
+                    </descriptors>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.antinori.game.ClueMain</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-							<mainClass>org.antinori.game.ClueMain</mainClass>
-						</manifest>
-
-					</archive>
-				</configuration>
-			</plugin>
-
-
-
-
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-
-					<descriptors>
-						<descriptor>src/assemble/assemble.xml</descriptor>
-					</descriptors>
-
-					<archive>
-						<manifest>
-							<mainClass>org.antinori.game.ClueMain</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 
 
 

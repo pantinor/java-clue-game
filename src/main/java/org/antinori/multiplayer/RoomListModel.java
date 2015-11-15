@@ -10,65 +10,66 @@ import javax.swing.AbstractListModel;
  * Room list model
  */
 public class RoomListModel extends AbstractListModel {
-	private final List<Room> roomList;
 
-	public RoomListModel() {
-		roomList = new ArrayList<Room>();
-	}
+    private final List<Room> roomList;
 
-	public int getSize() {
-		return roomList.size();
-	}
+    public RoomListModel() {
+        roomList = new ArrayList<Room>();
+    }
 
-	public Room getElementAt(int index) {
-		return roomList.get(index);
-	}
+    public int getSize() {
+        return roomList.size();
+    }
 
-	public void setRoomList(Map<Integer, Room> rooms) {
-		if (roomList.size() > 0) {
-			final int lastIndex = roomList.size() - 1;
-			roomList.clear();
-			fireIntervalRemoved(this, 0, lastIndex);
-		}
+    public Room getElementAt(int index) {
+        return roomList.get(index);
+    }
 
-		for (Map.Entry<Integer, Room> e : rooms.entrySet()) {
-			roomList.add(e.getValue());
-		}
-		if (roomList.size() > 0) {
-			fireIntervalAdded(this, 0, roomList.size() - 1);
-		}
-	}
+    public void setRoomList(Map<Integer, Room> rooms) {
+        if (roomList.size() > 0) {
+            final int lastIndex = roomList.size() - 1;
+            roomList.clear();
+            fireIntervalRemoved(this, 0, lastIndex);
+        }
 
-	public void addRoom(Room room) {
-		roomList.add(room);
-		fireIntervalAdded(this, roomList.size() - 1, roomList.size() - 1);
-	}
+        for (Map.Entry<Integer, Room> e : rooms.entrySet()) {
+            roomList.add(e.getValue());
+        }
+        if (roomList.size() > 0) {
+            fireIntervalAdded(this, 0, roomList.size() - 1);
+        }
+    }
 
-	public void removeRoom(Room room) {
-		int roomId = room.getId();
-		for (int i = 0; i < roomList.size(); i++) {
-			if (roomId == roomList.get(i).getId()) {
-				roomList.remove(i);
-				fireIntervalRemoved(this, i, i);
-				break;
-			}
-		}
-	}
-	
-	public void removeRooms() {
-		for (int i = 0; i < roomList.size(); i++) {
-			roomList.remove(i);
-			fireIntervalRemoved(this, i, i);
-		}
-	}
+    public void addRoom(Room room) {
+        roomList.add(room);
+        fireIntervalAdded(this, roomList.size() - 1, roomList.size() - 1);
+    }
 
-	public void updateRoom(Room room) {
-		int roomId = room.getId();
-		for (int i = 0; i < roomList.size(); i++) {
-			if (roomId == roomList.get(i).getId()) {
-				fireContentsChanged(this, i, i);
-				break;
-			}
-		}
-	}
+    public void removeRoom(Room room) {
+        int roomId = room.getId();
+        for (int i = 0; i < roomList.size(); i++) {
+            if (roomId == roomList.get(i).getId()) {
+                roomList.remove(i);
+                fireIntervalRemoved(this, i, i);
+                break;
+            }
+        }
+    }
+
+    public void removeRooms() {
+        for (int i = 0; i < roomList.size(); i++) {
+            roomList.remove(i);
+            fireIntervalRemoved(this, i, i);
+        }
+    }
+
+    public void updateRoom(Room room) {
+        int roomId = room.getId();
+        for (int i = 0; i < roomList.size(); i++) {
+            if (roomId == roomList.get(i).getId()) {
+                fireContentsChanged(this, i, i);
+                break;
+            }
+        }
+    }
 }

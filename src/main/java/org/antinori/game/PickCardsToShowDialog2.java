@@ -29,81 +29,123 @@ import java.util.ArrayList;
 
 import org.antinori.game.PickCardsToShowDialog.PickItemListener;
 
-
-
 public class PickCardsToShowDialog2 extends javax.swing.JDialog {
 
     public PickCardsToShowDialog2(ArrayList<Card> suggestion, String suggestion_text, Player player) {
-    	
-    	this.suggestion = suggestion;
-    	this.player = player;
-    	
-    	setModal(true);
-		setUndecorated(true);
-		ClueMain.setLocationInCenter(this,-200,-200);
+
+        this.suggestion = suggestion;
+        this.player = player;
+
+        setModal(true);
+        setUndecorated(true);
+        ClueMain.setLocationInCenter(this, -200, -200);
 
         initComponents();
-        
-    	suggestion_ta.setText(player.getPlayerName() + ", pick a card to show\naccording to the suggestion.\n\n" + suggestion_text);
-    	
-		ArrayList<Card> cards_in_hand = player.getCardsInHand();
-		
-		boolean has_a_card = false;
-			
-		for (Card card : cards_in_hand) {
-			
-			if (!suggestion.contains(card)) 
-				continue;
-			
-			has_a_card = true;
-			
-			int type = card.getType();
-			int value = card.getValue();
-			
-			if (type == TYPE_SUSPECT) {
-				if (value==SUSPECT_SCARLET) scarlet_rb.setEnabled(true);
-				if (value==SUSPECT_MUSTARD) mustard_rb.setEnabled(true);
-				if (value==SUSPECT_GREEN) green_rb.setEnabled(true);
-				if (value==SUSPECT_PLUM) plum_rb.setEnabled(true);
-				if (value==SUSPECT_WHITE) white_rb.setEnabled(true);
-				if (value==SUSPECT_PEACOCK) peacock_rb.setEnabled(true);
-			} else if (type == TYPE_WEAPON) {
-				if (value==WEAPON_REVOLVER) revolver_rb.setEnabled(true);
-				if (value==WEAPON_PIPE) pipe_rb.setEnabled(true);
-				if (value==WEAPON_ROPE) rope_rb.setEnabled(true);
-				if (value==WEAPON_CANDLE) candlestick_rb.setEnabled(true);
-				if (value==WEAPON_WRENCH) wrench_rb.setEnabled(true);
-				if (value==WEAPON_KNIFE) knife_rb.setEnabled(true);
-			} else {
-				if (value==ROOM_KITCHEN) kitchen_rb.setEnabled(true);
-				if (value==ROOM_BALLROOM) ballroom_rb.setEnabled(true);
-				if (value==ROOM_CONSERVATORY) conservatory_rb.setEnabled(true);
-				if (value==ROOM_BILLIARD) billiard_rb.setEnabled(true);
-				if (value==ROOM_LIBRARY) library_rb.setEnabled(true);
-				if (value==ROOM_STUDY) study_rb.setEnabled(true);
-				if (value==ROOM_HALL) hall_rb.setEnabled(true);
-				if (value==ROOM_LOUNGE) lounge_rb.setEnabled(true);
-				if (value==ROOM_DINING) dining_rb.setEnabled(true);
-			}
-						
-		}
-		
-		//let them click OK if they have no cards to show
-		if (!has_a_card) okButton.setEnabled(true);
 
-        
+        suggestion_ta.setText(player.getPlayerName() + ", pick a card to show\naccording to the suggestion.\n\n" + suggestion_text);
+
+        ArrayList<Card> cards_in_hand = player.getCardsInHand();
+
+        boolean has_a_card = false;
+
+        for (Card card : cards_in_hand) {
+
+            if (!suggestion.contains(card)) {
+                continue;
+            }
+
+            has_a_card = true;
+
+            int type = card.getType();
+            int value = card.getValue();
+
+            if (type == TYPE_SUSPECT) {
+                if (value == SUSPECT_SCARLET) {
+                    scarlet_rb.setEnabled(true);
+                }
+                if (value == SUSPECT_MUSTARD) {
+                    mustard_rb.setEnabled(true);
+                }
+                if (value == SUSPECT_GREEN) {
+                    green_rb.setEnabled(true);
+                }
+                if (value == SUSPECT_PLUM) {
+                    plum_rb.setEnabled(true);
+                }
+                if (value == SUSPECT_WHITE) {
+                    white_rb.setEnabled(true);
+                }
+                if (value == SUSPECT_PEACOCK) {
+                    peacock_rb.setEnabled(true);
+                }
+            } else if (type == TYPE_WEAPON) {
+                if (value == WEAPON_REVOLVER) {
+                    revolver_rb.setEnabled(true);
+                }
+                if (value == WEAPON_PIPE) {
+                    pipe_rb.setEnabled(true);
+                }
+                if (value == WEAPON_ROPE) {
+                    rope_rb.setEnabled(true);
+                }
+                if (value == WEAPON_CANDLE) {
+                    candlestick_rb.setEnabled(true);
+                }
+                if (value == WEAPON_WRENCH) {
+                    wrench_rb.setEnabled(true);
+                }
+                if (value == WEAPON_KNIFE) {
+                    knife_rb.setEnabled(true);
+                }
+            } else {
+                if (value == ROOM_KITCHEN) {
+                    kitchen_rb.setEnabled(true);
+                }
+                if (value == ROOM_BALLROOM) {
+                    ballroom_rb.setEnabled(true);
+                }
+                if (value == ROOM_CONSERVATORY) {
+                    conservatory_rb.setEnabled(true);
+                }
+                if (value == ROOM_BILLIARD) {
+                    billiard_rb.setEnabled(true);
+                }
+                if (value == ROOM_LIBRARY) {
+                    library_rb.setEnabled(true);
+                }
+                if (value == ROOM_STUDY) {
+                    study_rb.setEnabled(true);
+                }
+                if (value == ROOM_HALL) {
+                    hall_rb.setEnabled(true);
+                }
+                if (value == ROOM_LOUNGE) {
+                    lounge_rb.setEnabled(true);
+                }
+                if (value == ROOM_DINING) {
+                    dining_rb.setEnabled(true);
+                }
+            }
+
+        }
+
+        //let them click OK if they have no cards to show
+        if (!has_a_card) {
+            okButton.setEnabled(true);
+        }
+
     }
-    
-	//return the data after clicking OK
-	public Card showDialog() {
-		setVisible(true);
-		return picked_card;
-	}
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    //return the data after clicking OK
+    public Card showDialog() {
+        setVisible(true);
+        return picked_card;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -141,9 +183,7 @@ public class PickCardsToShowDialog2 extends javax.swing.JDialog {
         bg.setLayout(new java.awt.GridBagLayout());
 
         fgPanel.setOpaque(false);
-        
-        
-        
+
         scarlet_rb.addItemListener(new PickItemListener());
         mustard_rb.addItemListener(new PickItemListener());
         green_rb.addItemListener(new PickItemListener());
@@ -167,7 +207,7 @@ public class PickCardsToShowDialog2 extends javax.swing.JDialog {
         hall_rb.addItemListener(new PickItemListener());
         lounge_rb.addItemListener(new PickItemListener());
         dining_rb.addItemListener(new PickItemListener());
-        
+
         scarlet_rb.setEnabled(false);
         mustard_rb.setEnabled(false);
         green_rb.setEnabled(false);
@@ -193,11 +233,6 @@ public class PickCardsToShowDialog2 extends javax.swing.JDialog {
         dining_rb.setEnabled(false);
 
         okButton.setEnabled(false);
-        
-        
-        
-        
-        
 
         buttonGroup1.add(scarlet_rb);
         scarlet_rb.setText("Miss Scarlet");
@@ -300,106 +335,104 @@ public class PickCardsToShowDialog2 extends javax.swing.JDialog {
         org.jdesktop.layout.GroupLayout fgPanelLayout = new org.jdesktop.layout.GroupLayout(fgPanel);
         fgPanel.setLayout(fgPanelLayout);
         fgPanelLayout.setHorizontalGroup(
-            fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(fgPanelLayout.createSequentialGroup()
-                .add(18, 18, 18)
-                .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(fgPanelLayout.createSequentialGroup()
-                        .add(scarlet_rb)
-                        .add(55, 55, 55)
-                        .add(revolver_rb))
-                    .add(fgPanelLayout.createSequentialGroup()
+                fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(fgPanelLayout.createSequentialGroup()
+                        .add(18, 18, 18)
                         .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(mustard_rb)
-                            .add(green_rb)
-                            .add(white_rb)
-                            .add(peacock_rb)
-                            .add(plum_rb))
-                        .add(33, 33, 33)
+                                .add(fgPanelLayout.createSequentialGroup()
+                                        .add(scarlet_rb)
+                                        .add(55, 55, 55)
+                                        .add(revolver_rb))
+                                .add(fgPanelLayout.createSequentialGroup()
+                                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                .add(mustard_rb)
+                                                .add(green_rb)
+                                                .add(white_rb)
+                                                .add(peacock_rb)
+                                                .add(plum_rb))
+                                        .add(33, 33, 33)
+                                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                .add(candlestick_rb)
+                                                .add(rope_rb)
+                                                .add(pipe_rb)
+                                                .add(wrench_rb)
+                                                .add(knife_rb)))
+                                .add(suggestion_ta, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 232, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(18, 18, 18)
                         .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(candlestick_rb)
-                            .add(rope_rb)
-                            .add(pipe_rb)
-                            .add(wrench_rb)
-                            .add(knife_rb)))
-                    .add(suggestion_ta, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 232, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
-                .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                        .add(kitchen_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(study_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(library_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(billiard_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(ballroom_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(conservatory_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(hall_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(lounge_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(dining_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .add(org.jdesktop.layout.GroupLayout.TRAILING, fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                        .add(kitchen_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(study_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(library_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(billiard_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(ballroom_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(conservatory_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(hall_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(lounge_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .add(dining_rb, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .add(org.jdesktop.layout.GroupLayout.TRAILING, okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         fgPanelLayout.setVerticalGroup(
-            fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(fgPanelLayout.createSequentialGroup()
-                .add(16, 16, 16)
-                .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(fgPanelLayout.createSequentialGroup()
-                        .add(kitchen_rb)
-                        .add(0, 0, 0)
-                        .add(ballroom_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(conservatory_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(billiard_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(library_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(study_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(hall_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(lounge_rb)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(dining_rb)
-                        .add(39, 39, 39)
-                        .add(okButton))
-                    .add(fgPanelLayout.createSequentialGroup()
-                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(scarlet_rb)
-                            .add(revolver_rb))
+                fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(fgPanelLayout.createSequentialGroup()
+                        .add(16, 16, 16)
                         .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(fgPanelLayout.createSequentialGroup()
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(mustard_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(green_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(plum_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(white_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(peacock_rb))
-                            .add(fgPanelLayout.createSequentialGroup()
-                                .add(candlestick_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(rope_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(pipe_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(wrench_rb)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(knife_rb)))
-                        .add(18, 18, 18)
-                        .add(suggestion_ta, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 128, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .add(fgPanelLayout.createSequentialGroup()
+                                        .add(kitchen_rb)
+                                        .add(0, 0, 0)
+                                        .add(ballroom_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(conservatory_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(billiard_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(library_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(study_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(hall_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(lounge_rb)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(dining_rb)
+                                        .add(39, 39, 39)
+                                        .add(okButton))
+                                .add(fgPanelLayout.createSequentialGroup()
+                                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                                .add(scarlet_rb)
+                                                .add(revolver_rb))
+                                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                .add(fgPanelLayout.createSequentialGroup()
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(mustard_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(green_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(plum_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(white_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(peacock_rb))
+                                                .add(fgPanelLayout.createSequentialGroup()
+                                                        .add(candlestick_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(rope_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(pipe_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(wrench_rb)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                        .add(knife_rb)))
+                                        .add(18, 18, 18)
+                                        .add(suggestion_ta, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 128, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bg.add(fgPanel, new java.awt.GridBagConstraints());
 
         bgLabel.setIcon(ClueMain.getImageIcon("old_frame1.png")); // NOI18N
 
-        
-        
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -411,55 +444,98 @@ public class PickCardsToShowDialog2 extends javax.swing.JDialog {
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     public void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-    	
-    	if(scarlet_rb.isSelected()) picked_card = new Card(TYPE_SUSPECT, SUSPECT_SCARLET);
-    	if(mustard_rb.isSelected()) picked_card = new Card(TYPE_SUSPECT, SUSPECT_MUSTARD);
-    	if(green_rb.isSelected()) picked_card = new Card(TYPE_SUSPECT, SUSPECT_GREEN);
-    	if(plum_rb.isSelected()) picked_card = new Card(TYPE_SUSPECT, SUSPECT_PLUM);
-    	if(white_rb.isSelected()) picked_card = new Card(TYPE_SUSPECT, SUSPECT_WHITE);
-    	if(peacock_rb.isSelected()) picked_card = new Card(TYPE_SUSPECT, SUSPECT_PEACOCK);
 
-    	if(revolver_rb.isSelected()) picked_card = new Card(TYPE_WEAPON, WEAPON_REVOLVER);
-    	if(candlestick_rb.isSelected()) picked_card = new Card(TYPE_WEAPON, WEAPON_CANDLE);
-    	if(rope_rb.isSelected()) picked_card = new Card(TYPE_WEAPON, WEAPON_ROPE);
-    	if(pipe_rb.isSelected()) picked_card = new Card(TYPE_WEAPON, WEAPON_PIPE);
-    	if(wrench_rb.isSelected()) picked_card = new Card(TYPE_WEAPON, WEAPON_WRENCH);
-    	if(knife_rb.isSelected()) picked_card = new Card(TYPE_WEAPON, WEAPON_KNIFE);
+        if (scarlet_rb.isSelected()) {
+            picked_card = new Card(TYPE_SUSPECT, SUSPECT_SCARLET);
+        }
+        if (mustard_rb.isSelected()) {
+            picked_card = new Card(TYPE_SUSPECT, SUSPECT_MUSTARD);
+        }
+        if (green_rb.isSelected()) {
+            picked_card = new Card(TYPE_SUSPECT, SUSPECT_GREEN);
+        }
+        if (plum_rb.isSelected()) {
+            picked_card = new Card(TYPE_SUSPECT, SUSPECT_PLUM);
+        }
+        if (white_rb.isSelected()) {
+            picked_card = new Card(TYPE_SUSPECT, SUSPECT_WHITE);
+        }
+        if (peacock_rb.isSelected()) {
+            picked_card = new Card(TYPE_SUSPECT, SUSPECT_PEACOCK);
+        }
 
-    	if(kitchen_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_KITCHEN);
-    	if(ballroom_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_BALLROOM);
-    	if(conservatory_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_CONSERVATORY);
-    	if(billiard_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_BILLIARD);
-    	if(library_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_LIBRARY);
-    	if(study_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_STUDY);
-    	if(hall_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_HALL);
-    	if(lounge_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_LOUNGE);
-    	if(dining_rb.isSelected()) picked_card = new Card(TYPE_ROOM, ROOM_DINING);
-    	
-    	dispose();
+        if (revolver_rb.isSelected()) {
+            picked_card = new Card(TYPE_WEAPON, WEAPON_REVOLVER);
+        }
+        if (candlestick_rb.isSelected()) {
+            picked_card = new Card(TYPE_WEAPON, WEAPON_CANDLE);
+        }
+        if (rope_rb.isSelected()) {
+            picked_card = new Card(TYPE_WEAPON, WEAPON_ROPE);
+        }
+        if (pipe_rb.isSelected()) {
+            picked_card = new Card(TYPE_WEAPON, WEAPON_PIPE);
+        }
+        if (wrench_rb.isSelected()) {
+            picked_card = new Card(TYPE_WEAPON, WEAPON_WRENCH);
+        }
+        if (knife_rb.isSelected()) {
+            picked_card = new Card(TYPE_WEAPON, WEAPON_KNIFE);
+        }
+
+        if (kitchen_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_KITCHEN);
+        }
+        if (ballroom_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_BALLROOM);
+        }
+        if (conservatory_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_CONSERVATORY);
+        }
+        if (billiard_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_BILLIARD);
+        }
+        if (library_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_LIBRARY);
+        }
+        if (study_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_STUDY);
+        }
+        if (hall_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_HALL);
+        }
+        if (lounge_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_LOUNGE);
+        }
+        if (dining_rb.isSelected()) {
+            picked_card = new Card(TYPE_ROOM, ROOM_DINING);
+        }
+
+        dispose();
     }
-    
+
     class PickItemListener implements java.awt.event.ItemListener {
+
         public void itemStateChanged(java.awt.event.ItemEvent evt) {
-        	okButton.setEnabled(true);
+            okButton.setEnabled(true);
         }
     }
 
     private ArrayList<Card> suggestion;
-	private Player player;
-	private Card picked_card = null;
+    private Player player;
+    private Card picked_card = null;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton ballroom_rb;

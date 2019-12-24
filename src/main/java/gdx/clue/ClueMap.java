@@ -3,14 +3,13 @@ package gdx.clue;
 import com.badlogic.gdx.graphics.Color;
 import gdx.clue.astar.Location;
 import gdx.clue.astar.PathFinder;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class ClueMap implements Serializable {
+public class ClueMap {
 
     private final Location[][] nodes;
     private int hbound = 0;

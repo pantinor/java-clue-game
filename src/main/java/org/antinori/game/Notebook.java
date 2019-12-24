@@ -61,7 +61,7 @@ public class Notebook {
     }
 
     public boolean isLocationCardInHandOrToggled(Location location) {
-        Card roomCard = location.getRoomCard();
+        Card roomCard = (location.getRoomId() != -1 ? new Card(Card.TYPE_ROOM, location.getRoomId()) : null);
         return isLocationCardInHandOrToggled(roomCard);
     }
 

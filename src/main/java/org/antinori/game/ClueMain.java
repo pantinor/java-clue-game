@@ -80,7 +80,7 @@ public class ClueMain {
         try {
 
             map = new ClueMap(readMapTemplate());
-            pathfinder = new AStar<Location>();
+            pathfinder = new AStar<>();
 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 

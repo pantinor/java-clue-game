@@ -14,12 +14,42 @@ public class ClueMap implements Serializable {
     private int hbound = 0;
     private int vbound = 0;
 
-    public ClueMap(String template) throws Exception {
+    private static final String TEMPLATE = "xxxxxxxxxoxxxoxxxxxxxxxx\n"
+            + "xxxxxxxoooxxxoooxxxxxxxx\n"
+            + "xxxxxxooxxxxxxxooxxxxxxx\n"
+            + "xxxxxxooxxxxxxxooxxxxxxx\n"
+            + "xxxxxxooxxxxxxxooo5xxxxx\n"
+            + "xxxxxxoo4xxxxx4ooooooooo\n"
+            + "xxxx3xooxxxxxxxoooooooox\n"
+            + "oooooooox4xxx4xoooxxxxxx\n"
+            + "xooooooooooooooooo6xxxxx\n"
+            + "xxxxxoooooooooooooxxxxxx\n"
+            + "xxxxxxxxooxxxxxoooxxxxxx\n"
+            + "xxxxxxxxooxxxxxoooxxxx6x\n"
+            + "xxxxxxx2ooxxxxxoooooooox\n"
+            + "xxxxxxxxooxxxxxoooxx8xxx\n"
+            + "xxxxxxxxooxxxxxooxxxxxxx\n"
+            + "xxxxxx2xooxxxxxoo8xxxxxx\n"
+            + "xoooooooooxxxxxooxxxxxxx\n"
+            + "ooooooooooooooooooxxxxxx\n"
+            + "xooooooooxx00xxooooooooo\n"
+            + "xxxxxx1ooxxxxxxoooooooox\n"
+            + "xxxxxxxooxxxxx0oo7xxxxxx\n"
+            + "xxxxxxxooxxxxxxooxxxxxxx\n"
+            + "xxxxxxxooxxxxxxooxxxxxxx\n"
+            + "xxxxxxxooxxxxxxooxxxxxxx\n"
+            + "xxxxxxxoxxxxxxxxoxxxxxxx";
+
+    public ClueMap() {
+        this(TEMPLATE);
+    }
+
+    public ClueMap(String template) {
 
         StringTokenizer tokens = new StringTokenizer(template, "\n");
         vbound = tokens.countTokens();
         if (vbound == 0) {
-            throw new Exception("Template is empty.");
+            throw new IllegalArgumentException("Template is empty.");
         }
         String line = tokens.nextToken();
         if (hbound == 0) {

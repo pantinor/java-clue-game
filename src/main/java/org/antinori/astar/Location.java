@@ -1,8 +1,6 @@
 package org.antinori.astar;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +18,19 @@ public class Location implements Node<Location>, Serializable {
     private int roomId = -1;
     private Color color = Color.gray;
 
-    private transient List<Location> neighbors;
+    private final List<Location> neighbors;
 
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
-        neighbors = new ArrayList<Location>();
+        neighbors = new ArrayList<>();
     }
 
     public Location(int x, int y, Color color) {
         this.x = x;
         this.y = y;
         this.color = color;
-        neighbors = new ArrayList<Location>();
+        neighbors = new ArrayList<>();
     }
 
     public int getX() {
@@ -90,10 +88,6 @@ public class Location implements Node<Location>, Serializable {
         return roomId;
     }
 
-    public Card getRoomCard() {
-        return (roomId != -1 ? new Card(Card.TYPE_ROOM, roomId) : null);
-    }
-
     public Color getColor() {
         return color;
     }
@@ -127,7 +121,7 @@ public class Location implements Node<Location>, Serializable {
     }
 
     public Iterable<Location> neighbors() {
-        List<Location> realNeighbors = new ArrayList<Location>();
+        List<Location> realNeighbors = new ArrayList<>();
         if (!blocked) {
             for (Location loc : neighbors) {
                 if (!loc.blocked) {

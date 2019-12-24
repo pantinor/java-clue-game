@@ -85,7 +85,8 @@ public class Player {
     }
 
     public String toLongString() {
-        String location = (playerLocation != null && playerLocation.getRoomId() != -1 ? "in the " + playerLocation.getRoomCard().toString() : "outside of a room");
+        Card roomCard = (playerLocation.getRoomId() != -1 ? new Card(Card.TYPE_ROOM, playerLocation.getRoomId()) : null);
+        String location = (playerLocation != null && playerLocation.getRoomId() != -1 ? "in the " + roomCard : "outside of a room");
         return getPlayerCard().toString() + ", played by " + (isComputerPlayer() ? "computer" : getPlayerName()) + " is currently " + location + ".";
     }
 

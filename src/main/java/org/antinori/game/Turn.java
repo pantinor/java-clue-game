@@ -3,23 +3,13 @@ package org.antinori.game;
 import static org.antinori.game.Card.*;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import org.antinori.astar.Location;
 import org.antinori.multiplayer.MultiplayerFrame;
 
@@ -66,7 +56,7 @@ public class Turn {
                     }
 
                 } else {
-					// dialog for showing roll dice button, take secret passage
+                    // dialog for showing roll dice button, take secret passage
                     // button or make suggestion button or make accusation
 
                     if (player.hasMadeFalseAccusation()) {
@@ -100,7 +90,7 @@ public class Turn {
                         ClueMain.mapView.setEnabled(false);// disable map clicks
                         // again
 
-						// see if they made it to a room and let them make a
+                        // see if they made it to a room and let them make a
                         // suggestion
                         isInRoom = new_location.getRoomId() != -1;
                         if (isInRoom) {
@@ -181,7 +171,7 @@ public class Turn {
 
         Location new_location = null;
 
-		// try move the player to the room which is not in their cards or
+        // try move the player to the room which is not in their cards or
         // toggled
         Location location = player.getLocation();
         boolean isInRoom = location.getRoomId() != -1;
@@ -252,7 +242,7 @@ public class Turn {
             ArrayList<Location> choices = ClueMain.map.highlightReachablePaths(location, ClueMain.pathfinder, roll);
             ClueMain.mapView.repaint();
 
-			// see if they can move to a highlighted room which is not in their
+            // see if they can move to a highlighted room which is not in their
             // hand or toggled
             for (Location choice : choices) {
                 if (rooms.contains(choice)) {
@@ -263,7 +253,7 @@ public class Turn {
 
             if (new_location == null) {
                 int closest = 100;
-				// find a room location which is closest to them which is not in
+                // find a room location which is closest to them which is not in
                 // their hand or toggled
                 for (Location choice : choices) {
                     for (Location room : rooms) {
@@ -356,7 +346,7 @@ public class Turn {
         boolean isInRoom = location.getRoomId() != -1;
         boolean showSecret = (location.getRoomId() == ROOM_LOUNGE || location.getRoomId() == ROOM_STUDY || location.getRoomId() == ROOM_CONSERVATORY || location.getRoomId() == ROOM_KITCHEN);
 
-		//JOptionPane.showMessageDialog(ClueMain.frame,"showSecret " + showSecret,"",JOptionPane.PLAIN_MESSAGE);
+        //JOptionPane.showMessageDialog(ClueMain.frame,"showSecret " + showSecret,"",JOptionPane.PLAIN_MESSAGE);
         TurnDialog2 dialog1 = new TurnDialog2(player, true, showSecret, isInRoom);
         int action = dialog1.showDialog();
 
@@ -375,8 +365,7 @@ public class Turn {
             ClueMain.mapView.setEnabled(false);// disable map clicks again
 
             //send the location to the server
-            ClueMain.multiplayerFrame.sendMoveEvent(player, location.getX(), location.getY(), new_location.getX(), new_location.getY(), player.getPlayerColor(), false);
-
+            //ClueMain.multiplayerFrame.sendMoveEvent(player, location.getX(), location.getY(), new_location.getX(), new_location.getY(), player.getPlayerColor(), false);
             // see if they made it to a room and let them make a suggestion
             isInRoom = new_location.getRoomId() != -1;
             if (isInRoom) {
@@ -405,8 +394,7 @@ public class Turn {
 
             ClueMain.mapView.repaint();
 
-            ClueMain.multiplayerFrame.sendMoveEvent(player, location.getX(), location.getY(), player.getLocation().getX(), player.getLocation().getY(), player.getPlayerColor(), true);
-
+            //ClueMain.multiplayerFrame.sendMoveEvent(player, location.getX(), location.getY(), player.getLocation().getX(), player.getLocation().getY(), player.getPlayerColor(), true);
             TurnDialog2 dialog2 = new TurnDialog2(player, false, false, true);
             dialog2.showDialog();
             waitShowCardResponse();

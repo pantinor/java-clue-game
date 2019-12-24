@@ -1,6 +1,5 @@
 package org.antinori.multiplayer;
 
-import sfs2x.client.entities.Room;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -16,7 +15,7 @@ public class RoomListCellRenderer extends JLabel implements ListCellRenderer {
     }
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        Room room = (Room) value;
+        String room = (String) value;
 
         if (isSelected) {
             setBackground(list.getSelectionBackground());
@@ -26,7 +25,7 @@ public class RoomListCellRenderer extends JLabel implements ListCellRenderer {
             setForeground(list.getForeground());
         }
 
-        setText(room.getName());// + "(" + room.getUserCount() + "/" + room.getMaxUsers() + ")");
+        setText(room);// + "(" + room.getUserCount() + "/" + room.getMaxUsers() + ")");
 
         return this;
     }

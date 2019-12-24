@@ -88,7 +88,7 @@ public class ClueMap implements Serializable {
     }
 
     public Collection<Location> getLocations() {
-        Collection<Location> locations = new ArrayList<Location>();
+        Collection<Location> locations = new ArrayList<>();
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
                 locations.add(nodes[i][j]);
@@ -99,7 +99,7 @@ public class ClueMap implements Serializable {
 
     public Location getRoomLocation(int room_id) {
         Location room = null;
-        Collection<Location> locations = new ArrayList<Location>();
+        Collection<Location> locations = new ArrayList<>();
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
                 if (nodes[i][j].getRoomId() == room_id) {
@@ -112,7 +112,7 @@ public class ClueMap implements Serializable {
     }
 
     public ArrayList<Location> getAllRoomLocations(int exclusion) {
-        ArrayList<Location> rooms = new ArrayList<Location>(9);
+        ArrayList<Location> rooms = new ArrayList<>(9);
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
                 if (nodes[i][j].getRoomId() == exclusion) {
@@ -130,7 +130,7 @@ public class ClueMap implements Serializable {
         if (roomId == -1) {
             return null;
         }
-        ArrayList<Location> doors = new ArrayList<Location>();
+        ArrayList<Location> doors = new ArrayList<>();
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
                 if (nodes[i][j].getRoomId() == roomId) {;
@@ -145,7 +145,7 @@ public class ClueMap implements Serializable {
 
         Collection<Location> locs = getLocations();
 
-        ArrayList<Location> choices = new ArrayList<Location>();
+        ArrayList<Location> choices = new ArrayList<>();
 
         ArrayList<Location> doors = getAllDoorLocationsForRoom(starting_location.getRoomId());
 

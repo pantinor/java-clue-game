@@ -5,8 +5,8 @@ import java.util.List;
 
 /**
  * State used by path finders when walking potential node paths.
- * 
-* @author Gene McCulley
+ *
+ * @author Gene McCulley
  */
 class NodeState<T extends Node<T>> {
 

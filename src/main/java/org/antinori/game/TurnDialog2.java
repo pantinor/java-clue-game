@@ -93,24 +93,24 @@ public class TurnDialog2 extends javax.swing.JDialog {
         fgPanel.setLayout(fgPanelLayout);
         fgPanelLayout.setHorizontalGroup(
                 fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(fgPanelLayout.createSequentialGroup()
-                        .add(91, 91, 91)
-                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(makeSuggestionButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(takeSecretPassageButton)
-                                .add(rollDiceButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(96, Short.MAX_VALUE))
+                        .add(fgPanelLayout.createSequentialGroup()
+                                .add(91, 91, 91)
+                                .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(makeSuggestionButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                        .add(takeSecretPassageButton)
+                                        .add(rollDiceButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(96, Short.MAX_VALUE))
         );
         fgPanelLayout.setVerticalGroup(
                 fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(fgPanelLayout.createSequentialGroup()
-                        .add(64, 64, 64)
-                        .add(rollDiceButton)
-                        .add(18, 18, 18)
-                        .add(takeSecretPassageButton)
-                        .add(18, 18, 18)
-                        .add(makeSuggestionButton)
-                        .addContainerGap(66, Short.MAX_VALUE))
+                        .add(fgPanelLayout.createSequentialGroup()
+                                .add(64, 64, 64)
+                                .add(rollDiceButton)
+                                .add(18, 18, 18)
+                                .add(takeSecretPassageButton)
+                                .add(18, 18, 18)
+                                .add(makeSuggestionButton)
+                                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         bg.add(fgPanel, new java.awt.GridBagConstraints());
@@ -129,11 +129,11 @@ public class TurnDialog2 extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -171,9 +171,9 @@ public class TurnDialog2 extends javax.swing.JDialog {
         ClueMain.showcards.setSuggestion(suggestion, player, ClueMain.yourPlayer, ClueMain.clue.getPlayers());
 
         //for single player, continue with the showing of the cards
-        if (!ClueMain.multiplayerFrame.isConnected()) {
-            ClueMain.showcards.showCards();
-        }
+        //if (!ClueMain.multiplayerFrame.isConnected()) {
+        ClueMain.showcards.showCards();
+        //}
 
         action = ACTION_MADE_SUGGESTION;
 

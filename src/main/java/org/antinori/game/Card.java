@@ -1,9 +1,6 @@
 package org.antinori.game;
 
-
-import com.smartfoxserver.v2.protocol.serialization.SerializableSFSType;
-
-public class Card implements SerializableSFSType {
+public class Card {
 
     public Card() {
     }

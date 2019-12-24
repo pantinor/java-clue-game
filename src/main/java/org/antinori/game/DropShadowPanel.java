@@ -13,7 +13,6 @@ import org.jdesktop.swingx.graphics.ShadowRenderer;
 public class DropShadowPanel extends JPanel implements PropertyChangeListener {
 
     // angle and distance of the shadow from the original subjects
-
     private float angle = 45.0f;
     private int distance = 2;
 

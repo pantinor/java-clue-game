@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * An encapsulation of the data describing an event related to a
  * {@link PathFinder}.
- * 
-* @author Gene McCulley
+ *
+ * @author Gene McCulley
  */
 public abstract class PathEvent<T extends Node> extends EventObject {
 

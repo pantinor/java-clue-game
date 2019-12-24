@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * Basic functionality of path finders to make it easy to create implementations
  * of {@link PathFinder}.
- * 
-* @author Gene McCulley
+ *
+ * @author Gene McCulley
  */
 public abstract class AbstractPathFinder<T extends Node> implements PathFinder<T> {
 

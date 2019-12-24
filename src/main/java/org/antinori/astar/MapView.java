@@ -32,16 +32,12 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.font.FontRenderContext;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import org.antinori.game.ClueMain;
 import org.antinori.game.SoundEffect;
 
@@ -51,7 +47,7 @@ public class MapView extends JPanel implements MouseListener {
     private ClueMap map;
     private List<Location> path;
 
-    public static final ArrayList<BufferedImage> room_images = new ArrayList<BufferedImage>(10);
+    public static final ArrayList<BufferedImage> room_images = new ArrayList<>(10);
 
     public static final Integer[] scarlet_coord = {SUSPECT_SCARLET, 5, 55, 190, 200};
     public static final Integer[] mustard_coord = {SUSPECT_MUSTARD, 5, 55, 190, 200};
@@ -60,7 +56,7 @@ public class MapView extends JPanel implements MouseListener {
     public static final Integer[] white_coord = {SUSPECT_WHITE, 5, 55, 190, 200};
     public static final Integer[] peacock_coord = {SUSPECT_PEACOCK, 5, 55, 190, 200};
 
-    public static final ArrayList<BufferedImage> suspect_images = new ArrayList<BufferedImage>(6);
+    public static final ArrayList<BufferedImage> suspect_images = new ArrayList<>(6);
 
     public static final Integer[] knife_coord = {WEAPON_KNIFE, 54, 32, 582, 853};
     public static final Integer[] rope_coord = {WEAPON_ROPE, 54, 32, 582, 853};
@@ -69,7 +65,7 @@ public class MapView extends JPanel implements MouseListener {
     public static final Integer[] wrench_coord = {WEAPON_WRENCH, 54, 32, 582, 853};
     public static final Integer[] revolver_coord = {WEAPON_REVOLVER, 54, 32, 582, 853};
 
-    public static final ArrayList<BufferedImage> weapon_images = new ArrayList<BufferedImage>(6);
+    public static final ArrayList<BufferedImage> weapon_images = new ArrayList<>(6);
 
     public static final ArrayList<Image> dice_faces = new ArrayList<Image>(6);
     public Image rolledDiceImageLeft = null;
@@ -79,7 +75,7 @@ public class MapView extends JPanel implements MouseListener {
         this.map = map;
 
         setBackground(Color.gray);
-		//addMouseListener(this);
+        //addMouseListener(this);
 
         try {
 
@@ -182,8 +178,6 @@ public class MapView extends JPanel implements MouseListener {
 
         rolledDiceImageLeft = dice_faces.get(roll1 - 1);
         rolledDiceImageRight = dice_faces.get(roll2 - 1);
-
-        ClueMain.multiplayerFrame.sendDiceRollEvent(roll1, roll2);
 
         return roll1 + roll2;
 

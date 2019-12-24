@@ -2,12 +2,9 @@ package org.antinori.game;
 
 import java.awt.Color;
 import java.util.ArrayList;
-
 import org.antinori.astar.Location;
 
-import com.smartfoxserver.v2.protocol.serialization.SerializableSFSType;
-
-public class Player implements SerializableSFSType {
+public class Player {
 
     private int suspectNumber = 0;
     private String suspectName = null;

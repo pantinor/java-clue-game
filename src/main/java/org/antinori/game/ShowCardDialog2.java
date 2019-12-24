@@ -55,25 +55,25 @@ public class ShowCardDialog2 extends javax.swing.JDialog {
         fgPanel.setLayout(fgPanelLayout);
         fgPanelLayout.setHorizontalGroup(
                 fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(fgPanelLayout.createSequentialGroup()
-                        .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(fgPanelLayout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .add(jTextArea1))
-                                .add(fgPanelLayout.createSequentialGroup()
-                                        .add(108, 108, 108)
-                                        .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 122, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                        .add(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())
+                        .add(fgPanelLayout.createSequentialGroup()
+                                .add(fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(fgPanelLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .add(jTextArea1))
+                                        .add(fgPanelLayout.createSequentialGroup()
+                                                .add(108, 108, 108)
+                                                .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 122, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                                .add(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         fgPanelLayout.setVerticalGroup(
                 fgPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(fgPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jTextArea1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(okButton)
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(fgPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .add(jTextArea1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(okButton)
+                                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bg.add(fgPanel, new java.awt.GridBagConstraints());
@@ -92,11 +92,11 @@ public class ShowCardDialog2 extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(bg, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();

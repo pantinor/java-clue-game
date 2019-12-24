@@ -3,8 +3,8 @@ package org.antinori.astar;
 /**
  * An interface to be implemented by classes that want a {@link PathFinder} to
  * find paths over them.
- * 
-* @author Gene McCulley
+ *
+ * @author Gene McCulley
  */
 public interface Node<T extends Node<T>> {
 

@@ -3,12 +3,10 @@ package org.antinori.astar;
 import static org.antinori.game.Card.*;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.imageio.ImageIO;
 
-import org.antinori.game.Card;
 
 public class RoomIconPlacement {
 

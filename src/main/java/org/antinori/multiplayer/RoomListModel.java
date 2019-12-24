@@ -1,38 +1,34 @@
 package org.antinori.multiplayer;
 
-import sfs2x.client.entities.Room;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractListModel;
 
-/**
- * Room list model
- */
 public class RoomListModel extends AbstractListModel {
 
-    private final List<Room> roomList;
+    private final List<String> roomList;
 
     public RoomListModel() {
-        roomList = new ArrayList<Room>();
+        roomList = new ArrayList();
     }
 
     public int getSize() {
         return roomList.size();
     }
 
-    public Room getElementAt(int index) {
+    public String getElementAt(int index) {
         return roomList.get(index);
     }
 
-    public void setRoomList(Map<Integer, Room> rooms) {
+    public void setRoomList(Map<Integer, String> rooms) {
         if (roomList.size() > 0) {
             final int lastIndex = roomList.size() - 1;
             roomList.clear();
             fireIntervalRemoved(this, 0, lastIndex);
         }
 
-        for (Map.Entry<Integer, Room> e : rooms.entrySet()) {
+        for (Map.Entry<Integer, String> e : rooms.entrySet()) {
             roomList.add(e.getValue());
         }
         if (roomList.size() > 0) {
@@ -40,15 +36,14 @@ public class RoomListModel extends AbstractListModel {
         }
     }
 
-    public void addRoom(Room room) {
+    public void addRoom(String room) {
         roomList.add(room);
         fireIntervalAdded(this, roomList.size() - 1, roomList.size() - 1);
     }
 
-    public void removeRoom(Room room) {
-        int roomId = room.getId();
+    public void removeRoom(String room) {
         for (int i = 0; i < roomList.size(); i++) {
-            if (roomId == roomList.get(i).getId()) {
+            if (room.equals(roomList.get(i))) {
                 roomList.remove(i);
                 fireIntervalRemoved(this, i, i);
                 break;
@@ -63,10 +58,9 @@ public class RoomListModel extends AbstractListModel {
         }
     }
 
-    public void updateRoom(Room room) {
-        int roomId = room.getId();
+    public void updateRoom(String room) {
         for (int i = 0; i < roomList.size(); i++) {
-            if (roomId == roomList.get(i).getId()) {
+            if (room.equals(roomList.get(i))) {
                 fireContentsChanged(this, i, i);
                 break;
             }

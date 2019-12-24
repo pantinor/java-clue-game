@@ -57,7 +57,7 @@ public class NotebookPanel extends JPanel implements MouseListener {
     public void setNotebook(Notebook notebook) {
         this.notebook = notebook;
 
-		//set labels
+        //set labels
         name = notebook.getPlayer().getPlayerName();
 
         setCellData(cellArray[1][2], null, "SUSPECTS", false, CATEGORY_COLOR);
@@ -212,7 +212,7 @@ public class NotebookPanel extends JPanel implements MouseListener {
         g2.setColor(LINES_COLOR);
         g2.drawLine(cell_width * 12, cell_height * 3 + 3, cell_width * 12, cell_height * 28 + 3);//vertical line
 
-		//g2.drawLine(0,cell_height*cell_count_yaxis,cell_width*cell_count_xaxis,cell_height*cell_count_yaxis);//bottom
+        //g2.drawLine(0,cell_height*cell_count_yaxis,cell_width*cell_count_xaxis,cell_height*cell_count_yaxis);//bottom
         for (int i = 0; i <= NUM_SUSPECTS; i++) {
             g2.drawLine(0, cell_height * (3 + i) + 3, cell_width * cell_count_xaxis, cell_height * (3 + i) + 3);
         }

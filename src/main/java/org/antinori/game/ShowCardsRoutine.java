@@ -3,25 +3,9 @@ package org.antinori.game;
 import static org.antinori.game.Card.TYPE_ROOM;
 import static org.antinori.game.Card.TYPE_SUSPECT;
 import static org.antinori.game.Card.TYPE_WEAPON;
-
 import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
 import org.antinori.astar.Location;
 
 public class ShowCardsRoutine {
@@ -71,15 +55,14 @@ public class ShowCardsRoutine {
                 //set location color to the players color
                 room_location.setColor(player.getPlayerColor());
 
-                ClueMain.multiplayerFrame.sendMoveEvent(player, player.getLocation().getX(), player.getLocation().getY(),
-                        room_location.getX(), room_location.getY(), player.getPlayerColor(), false);
-
-				//ClueMain.multiplayerFrame.showTimedDialogAlert(player.toString() + " has been called to the " + new Card(TYPE_ROOM,room_location.getRoomId()).toString());					
+                //ClueMain.multiplayerFrame.sendMoveEvent(player, player.getLocation().getX(), player.getLocation().getY(),
+                //        room_location.getX(), room_location.getY(), player.getPlayerColor(), false);
+                //ClueMain.multiplayerFrame.showTimedDialogAlert(player.toString() + " has been called to the " + new Card(TYPE_ROOM,room_location.getRoomId()).toString());					
             }
         }
 
         suggestion_text = String.format(ClueMain.formatter, suggesting_player.toString(), suspect.toString(), weapon.toString(), room.toString());
-        ClueMain.multiplayerFrame.sendSetSuggestionEvent(suspect, weapon, room, suggesting_player);
+        //ClueMain.multiplayerFrame.sendSetSuggestionEvent(suspect, weapon, room, suggesting_player);
 
         ClueMain.mapView.repaint();
 

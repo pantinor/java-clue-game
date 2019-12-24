@@ -125,33 +125,33 @@ public class ClueMain {
         //jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 260, Short.MAX_VALUE)
+                        .addGap(0, 260, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 800, Short.MAX_VALUE)
+                        .addGap(0, 800, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 800, Short.MAX_VALUE)
+                        .addGap(0, 800, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 200, Short.MAX_VALUE)
+                        .addGap(0, 200, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(main);
@@ -159,18 +159,18 @@ public class ClueMain {
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         frame.add(main);
@@ -386,7 +386,7 @@ public class ClueMain {
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		//Create a rescale filter op that makes the image 50% opaque.
+        //Create a rescale filter op that makes the image 50% opaque.
         //float[] scales = { 1f, 1f, 1f, 0.5f };
         //float[] offsets = new float[4];
         //RescaleOp rop = new RescaleOp(scales, offsets, null);
@@ -445,13 +445,13 @@ public class ClueMain {
         BufferedImage ret = (BufferedImage) img;
         int w, h;
         if (higherQuality) {
-			// Use multi-step technique: start with original size, then
+            // Use multi-step technique: start with original size, then
             // scale down in multiple passes with drawImage()
             // until the target size is reached
             w = img.getWidth();
             h = img.getHeight();
         } else {
-			// Use one-step technique: scale directly from original
+            // Use one-step technique: scale directly from original
             // size to target size with a single drawImage() call
             w = targetWidth;
             h = targetHeight;
@@ -489,7 +489,7 @@ public class ClueMain {
         String[] coordsText = new String[]{"10,10", "10,20", "20,20", "20,10"};
 
         Path2D.Float regionOfInterest = new Path2D.Float();
-	    // We must store the first X,Y coordinates so we can close the path, by creating a line
+        // We must store the first X,Y coordinates so we can close the path, by creating a line
         // to the last point to the first one.
         boolean isFirst = true;
         double firstX = 0, firstY = 0;
@@ -509,7 +509,7 @@ public class ClueMain {
         }
         // Close the path.
         regionOfInterest.lineTo(firstX, firstY);
-	    // We have the path that define the region of interest. In order to dim the image regions
+        // We have the path that define the region of interest. In order to dim the image regions
         // outside of this path we must create another path that contains everything but the 
         // region of interest.
         // First we create a path for the whole image -- a rectangle with the image's coordinates.
@@ -519,12 +519,12 @@ public class ClueMain {
         pathForWholeImage.lineTo(baseImage.getWidth(), baseImage.getHeight());
         pathForWholeImage.lineTo(0, baseImage.getHeight());
         pathForWholeImage.lineTo(0, 0);
-	    // In order to use Constructive Area Geometry (CAG) operations we must use the Area class.
+        // In order to use Constructive Area Geometry (CAG) operations we must use the Area class.
         // First we create an Area with the path for the whole image...
         Area wholeImage = new Area(pathForWholeImage);
         // .. then we subtract the region of interest from this Area.
         wholeImage.subtract(new Area(regionOfInterest));
-	    // Now we have a Path2D.Float for the region of interest and an Area for the rest of the image.    
+        // Now we have a Path2D.Float for the region of interest and an Area for the rest of the image.    
         // To draw and paint them we need a graphic context, which we will get from the image itself. 
         Graphics2D g2d = (Graphics2D) baseImage.getGraphics();
         // We want antialiasing!

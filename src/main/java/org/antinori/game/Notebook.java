@@ -14,12 +14,10 @@ import java.util.Random;
 
 import org.antinori.astar.Location;
 
-import com.smartfoxserver.v2.protocol.serialization.SerializableSFSType;
-
-public class Notebook implements SerializableSFSType {
+public class Notebook {
 
     private Player player;
-    private LinkedHashMap<Card, Entry> entries = new LinkedHashMap<Card, Entry>();
+    private LinkedHashMap<Card, Entry> entries = new LinkedHashMap<>();
 
     public Notebook(Player player) {
         this.setPlayer(player);
@@ -190,7 +188,7 @@ public class Notebook implements SerializableSFSType {
         this.player = player;
     }
 
-    class Entry implements SerializableSFSType {
+    class Entry {
 
         Card value;
         boolean inHand = false;

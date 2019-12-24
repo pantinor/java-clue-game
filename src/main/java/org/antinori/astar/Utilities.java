@@ -5,8 +5,8 @@ import java.util.Map;
 
 /**
  * Utilities that belong nowhere else.
- * 
-* @author Gene McCulley
+ *
+ * @author Gene McCulley
  */
 class Utilities {
 

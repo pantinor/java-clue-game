@@ -6,9 +6,6 @@ import static org.antinori.game.Card.SUSPECT_PEACOCK;
 import static org.antinori.game.Card.SUSPECT_PLUM;
 import static org.antinori.game.Card.SUSPECT_SCARLET;
 import static org.antinori.game.Card.SUSPECT_WHITE;
-import static org.antinori.game.Card.TYPE_ROOM;
-import static org.antinori.game.Card.TYPE_SUSPECT;
-import static org.antinori.game.Card.TYPE_WEAPON;
 import static org.antinori.game.Card.green;
 import static org.antinori.game.Card.mustard;
 import static org.antinori.game.Card.peacock;
@@ -27,7 +24,6 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -37,48 +33,16 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import org.antinori.astar.Location;
 import org.antinori.game.AccusationDialog2;
 import org.antinori.game.Card;
-import org.antinori.game.Clue;
 import org.antinori.game.ClueMain;
-import org.antinori.game.PickCardsToShowDialog2;
 import org.antinori.game.Player;
 import org.antinori.game.SoundEffect;
 
-import sfs2x.client.SmartFox;
-import sfs2x.client.core.BaseEvent;
-import sfs2x.client.core.IEventListener;
-import sfs2x.client.core.SFSEvent;
-import sfs2x.client.entities.Room;
-import sfs2x.client.entities.User;
-import sfs2x.client.entities.match.BoolMatch;
-import sfs2x.client.entities.match.MatchExpression;
-import sfs2x.client.entities.match.RoomProperties;
-import sfs2x.client.entities.variables.SFSUserVariable;
-import sfs2x.client.entities.variables.UserVariable;
-import sfs2x.client.requests.CreateRoomRequest;
-import sfs2x.client.requests.ExtensionRequest;
-import sfs2x.client.requests.FindRoomsRequest;
-import sfs2x.client.requests.JoinRoomRequest;
-import sfs2x.client.requests.LeaveRoomRequest;
-import sfs2x.client.requests.LoginRequest;
-import sfs2x.client.requests.LogoutRequest;
-import sfs2x.client.requests.PrivateMessageRequest;
-import sfs2x.client.requests.PublicMessageRequest;
-import sfs2x.client.requests.RoomSettings;
-import sfs2x.client.requests.SetUserVariablesRequest;
+public class MultiplayerFrame extends javax.swing.JPanel {
 
-import com.smartfoxserver.v2.entities.data.ISFSArray;
-import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.exceptions.SFSException;
-
-public class MultiplayerFrame extends javax.swing.JPanel implements IEventListener {
-
-    private SmartFox sfs;
-    private RoomListModel roomListModel;
-    private UserListModel userListModel;
+    private final RoomListModel roomListModel;
+    private final UserListModel userListModel;
     private StringBuilder chatHistory;
 
     String mySelectedCharacter = scarlet.toString();
@@ -87,465 +51,13 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
 
         initComponents();
 
-        // Creates new instance of SmatFoxClient and adds the event handlers
-        sfs = new SmartFox();
-        sfs.addEventListener(SFSEvent.CONFIG_LOAD_SUCCESS, this);
-        sfs.addEventListener(SFSEvent.CONFIG_LOAD_FAILURE, this);
-        sfs.addEventListener(SFSEvent.CONNECTION, this);
-        sfs.addEventListener(SFSEvent.CONNECTION_LOST, this);
-        sfs.addEventListener(SFSEvent.HANDSHAKE, this);
-
-        sfs.addEventListener(SFSEvent.CONNECTION_RETRY, this);
-        sfs.addEventListener(SFSEvent.CONNECTION_RESUME, this);
-
-        sfs.addEventListener(SFSEvent.LOGIN, this);
-        sfs.addEventListener(SFSEvent.LOGOUT, this);
-
-        sfs.addEventListener(SFSEvent.ROOM_FIND_RESULT, this);
-        sfs.addEventListener(SFSEvent.ROOM_ADD, this);
-        sfs.addEventListener(SFSEvent.ROOM_CREATION_ERROR, this);
-        sfs.addEventListener(SFSEvent.ROOM_REMOVE, this);
-        sfs.addEventListener(SFSEvent.USER_COUNT_CHANGE, this);
-
-        sfs.addEventListener(SFSEvent.ROOM_JOIN, this);
-        sfs.addEventListener(SFSEvent.ROOM_JOIN_ERROR, this);
-
-        sfs.addEventListener(SFSEvent.USER_ENTER_ROOM, this);
-        sfs.addEventListener(SFSEvent.USER_EXIT_ROOM, this);
-
-        sfs.addEventListener(SFSEvent.PUBLIC_MESSAGE, this);
-        sfs.addEventListener(SFSEvent.PRIVATE_MESSAGE, this);
-
-        sfs.addEventListener(SFSEvent.OBJECT_MESSAGE, this);
-        sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, this);
-
         // Sets the Room and User list models to the user and room lists
         this.roomListModel = (RoomListModel) listRooms.getModel();
         this.userListModel = (UserListModel) listUsers.getModel();
 
     }
 
-    public boolean isConnected() {
-        return sfs.isConnected();
-    }
-
-    public void dispatch(BaseEvent event) throws SFSException {
-
-        if (event.getType().equals(SFSEvent.CONFIG_LOAD_SUCCESS)) {
-
-        } else if (event.getType().equals(SFSEvent.CONFIG_LOAD_FAILURE)) {
-
-        } else if (event.getType().equals(SFSEvent.CONNECTION)) {
-
-            System.out.println(event.getArguments());
-
-            if (event.getArguments().get("success") != null) {
-
-                MatchExpression exp = new MatchExpression(RoomProperties.HAS_FREE_PLAYER_SLOTS, BoolMatch.EQUALS, true);
-                sfs.send(new FindRoomsRequest(exp));
-
-            } else {
-
-                JOptionPane.showMessageDialog(ClueMain.frame, "Failed connecting to " + sfs.getConfig().getHost() + ":" + sfs.getConfig().getPort(), "", JOptionPane.ERROR_MESSAGE);
-
-            }
-
-        } else if (event.getType().equals(SFSEvent.CONNECTION_LOST)) {
-
-            System.out.println(textUserName.getText() + " CONNECTION_LOST: " + event.getArguments());
-
-            buttonJoin.setEnabled(false);
-            buttonSendPrivate.setEnabled(false);
-            buttonLogout.setEnabled(false);
-            textChatMessage.setEnabled(false);
-            buttonSend.setEnabled(false);
-
-            LoginButton.setEnabled(true);
-
-            toggleRadioButtons(false);
-
-            roomListModel.removeRooms();
-            userListModel.removeUsers();
-
-        } else if (event.getType().equals(SFSEvent.CONNECTION_RETRY)) {
-            System.out.println(textUserName.getText() + " CONNECTION_RETRY: " + event.getArguments());
-
-        } else if (event.getType().equals(SFSEvent.CONNECTION_RESUME)) {
-            System.out.println(textUserName.getText() + " CONNECTION_RESUME: " + event.getArguments());
-
-        } else if (event.getType().equals(SFSEvent.LOGIN)) {
-            System.out.println(textUserName.getText() + " LOGIN: " + event.getArguments());
-
-        } else if (event.getType().equals(SFSEvent.HANDSHAKE)) {
-
-            System.out.println(textUserName.getText() + " HANDSHAKE: " + event.getArguments());
-
-            //login the user
-            sfs.send(new LoginRequest(textUserName.getText(), "", "Clue"));
-            LoginButton.setEnabled(false);
-
-            chatHistory = new StringBuilder();
-            textChatHistory.setText("");
-
-            setMyCharacterUserVar();
-            toggleRadioButtons(true);
-
-            //get the list of rooms
-            MatchExpression exp = new MatchExpression(RoomProperties.HAS_FREE_PLAYER_SLOTS, BoolMatch.EQUALS, true);
-            sfs.send(new FindRoomsRequest(exp));
-
-        } else if (event.getType().equals(SFSEvent.LOGOUT)) {
-
-            System.out.println(textUserName.getText() + " LOGOUT: " + event.getArguments().toString());
-
-            roomListModel.removeRooms();
-            userListModel.removeUsers();
-
-            LeaveRoomButton.setEnabled(false);
-
-            sfs.disconnect();
-
-        } else if (event.getType().equals(SFSEvent.OBJECT_MESSAGE)) {
-
-            System.out.println(textUserName.getText() + " OBJECT_MESSAGE: " + event.getArguments().toString());
-
-        } else if (event.getType().equals(SFSEvent.ROOM_FIND_RESULT)) {
-
-            System.out.println("Rooms found: " + event.getArguments().get("rooms"));
-            ArrayList<Room> rooms = (ArrayList) event.getArguments().get("rooms");
-            for (Room room : rooms) {
-                roomListModel.addRoom(room);
-            }
-
-            // When new room is created it's added to the room list.
-        } else if (event.getType().equals(SFSEvent.ROOM_ADD)) {
-
-            System.out.println(textUserName.getText() + " ROOM_ADD: " + event.getArguments());
-
-            Room room = (Room) event.getArguments().get("room");
-            roomListModel.addRoom(room);
-
-        } // If room creation failed an error message is shown
-        else if (event.getType().equals(SFSEvent.ROOM_CREATION_ERROR)) {
-
-            String error = "Room creation error: " + event.getArguments().get("errorMessage").toString();
-            JOptionPane.showMessageDialog(ClueMain.frame, error, "", JOptionPane.ERROR_MESSAGE);
-
-        } // When a room is deleted it's removed from the room list.
-        else if (event.getType().equals(SFSEvent.ROOM_REMOVE)) {
-
-            System.out.println(textUserName.getText() + " ROOM_REMOVE: " + event.getArguments());
-
-            Room room = (Room) event.getArguments().get("room");
-            roomListModel.removeRoom(room);
-        } // When the user count change the room list is refreshed
-        else if (event.getType().equals(SFSEvent.USER_COUNT_CHANGE)) {
-
-            System.out.println(textUserName.getText() + " USER_COUNT_CHANGE: " + event.getArguments());
-
-            Room room = (Room) event.getArguments().get("room");
-            roomListModel.updateRoom(room);
-
-        } else if (event.getType().equals(SFSEvent.ROOM_JOIN)) {
-			//fired when your user joins a room
-
-            System.out.println(textUserName.getText() + " ROOM_JOIN: " + event.getArguments());
-
-            Room room = (Room) event.getArguments().get("room");
-
-            roomListModel.updateRoom(room);
-
-            listRooms.setSelectedValue(room, true);
-            buttonJoin.setEnabled(false);
-            textChatMessage.setEnabled(true);
-            buttonSend.setEnabled(true);
-            LeaveRoomButton.setEnabled(true);
-
-            userListModel.setUserList(room.getUserList());
-
-            chatHistory.append("<font color='#cc0000'>{ Room <b>");
-            chatHistory.append(room.getName());
-            chatHistory.append("</b> joined }</font><br>");
-            textChatHistory.setText(chatHistory.toString());
-            textChatMessage.requestFocus();
-
-            scarletRadio.setEnabled(false);
-            mustardRadio.setEnabled(false);
-            greenRadio.setEnabled(false);
-            whiteRadio.setEnabled(false);
-            peacockRadio.setEnabled(false);
-            plumRadio.setEnabled(false);
-
-            //set the room name in the user so we can set the game over flag when they disconnect
-            List<UserVariable> userVars = new ArrayList<UserVariable>();
-            userVars.add(new SFSUserVariable("room", room.getName()));
-            sfs.send(new SetUserVariablesRequest(userVars));
-
-        } else if (event.getType().equals(SFSEvent.EXTENSION_RESPONSE)) {
-            System.out.println(textUserName.getText() + " EXTENSION_RESPONSE: " + event.getArguments());
-
-            if (event.getArguments().get("cmd").equals("validateJoinRoom")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-                System.out.println(obj.getUtfString("message"));
-
-                if (!obj.getBool("validated")) {
-                    JOptionPane.showMessageDialog(ClueMain.frame, obj.getUtfString("message"), "", JOptionPane.ERROR_MESSAGE);
-                }
-
-            } else if (event.getArguments().get("cmd").equals("gameOver")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-                System.out.println(obj.getUtfString("message"));
-
-                setChatText("GAME", obj.getUtfString("message"), false);
-
-				//JOptionPane.showMessageDialog(ClueMain.frame,obj.getUtfString("message"), "", JOptionPane.WARNING_MESSAGE);
-            } else if (event.getArguments().get("cmd").equals("setPlayers")) {
-
-                ClueMain.clue = new Clue();
-
-                setYourMultiplayer();
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-                ISFSArray ids = obj.getSFSArray("ids");
-                ISFSArray names = obj.getSFSArray("names");
-                for (int i = 0; i < ids.size(); i++) {
-                    setOtherMultiplayer(ids.getInt(i), names.getUtfString(i));
-                }
-
-            } else if (event.getArguments().get("cmd").equals("dealtCard")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-                Card card = (Card) obj.getClass("card");
-                ClueMain.yourPlayer.addCard(card);
-                System.out.println("Got card: " + card);
-
-                dealButton.setEnabled(false);
-
-            } else if (event.getArguments().get("cmd").equals("getSet")) {
-
-                ClueMain.setUpMultiplayerGame();
-
-                setChatText("GAME", "Your notebook has been set.", false);
-                setChatText("GAME", "Player locations have been set.", false);
-
-            } else if (event.getArguments().get("cmd").equals("startTurn")) {
-
-                setChatText("GAME", "It's your turn now.", false);
-
-                ClueMain.threadPoolExecutor.execute(new Runnable() {
-                    public void run() {
-                        ClueMain.setCurrentPlayer(ClueMain.yourPlayer);
-                        ClueMain.turn.startTurnMultiplayerTurn(ClueMain.yourPlayer);
-                    }
-                });
-
-            } else if (event.getArguments().get("cmd").equals("diceRoll")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-
-                int roll1 = obj.getInt("roll1");
-                int roll2 = obj.getInt("roll2");
-
-                SoundEffect.DICE.play();
-
-                ClueMain.mapView.rolledDiceImageLeft = ClueMain.mapView.dice_faces.get(roll1 - 1);
-                ClueMain.mapView.rolledDiceImageRight = ClueMain.mapView.dice_faces.get(roll2 - 1);
-
-            } else if (event.getArguments().get("cmd").equals("move")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-
-                String name = obj.getUtfString("player");
-                int id = obj.getInt("character");
-                int fx = obj.getInt("from-x");
-                int fy = obj.getInt("from-y");
-                int tx = obj.getInt("to-x");
-                int ty = obj.getInt("to-y");
-                Color color = new Color(obj.getInt("playerColor"));
-
-                boolean secret = obj.getBool("secretPassage");
-                if (secret) {
-                    SoundEffect.CREAK.play();
-                }
-
-                ClueMain.setCurrentPlayer(ClueMain.clue.getPlayer(id));
-
-                Location from = ClueMain.map.getLocation(fx, fy);
-                Location to = ClueMain.map.getLocation(tx, ty);
-
-                ClueMain.setPlayerLocationFromMapClick(ClueMain.currentTurnPlayer, color, from, to);
-                ClueMain.mapView.repaint();
-
-                //you have been called over in a suggestion
-                if (ClueMain.clue.getPlayer(id) == ClueMain.yourPlayer) {
-                    int roomid = ClueMain.mapView.getRoomRoomNameAtLocation(tx, ty);
-                    showTimedDialogAlert("You have has been called to the " + (roomid != -1 ? new Card(TYPE_ROOM, roomid).toString() : ""));
-                }
-
-                setChatText(name, " has moved.", false);
-
-            } else if (event.getArguments().get("cmd").equals("suggestion")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-
-                String name = obj.getUtfString("suggesting_player_name");
-                Card suggesting_suspect = new Card(TYPE_SUSPECT, obj.getInt("suggesting_player_suspectId"));
-                Card suspect = new Card(TYPE_SUSPECT, obj.getInt("suspect"));
-                Card weapon = new Card(TYPE_WEAPON, obj.getInt("weapon"));
-                Card room = new Card(TYPE_ROOM, obj.getInt("room"));
-
-                String suggestion_text = String.format(ClueMain.formatter, suggesting_suspect.toString(), suspect.toString(), weapon.toString(), room.toString());
-                setChatText(name, suggestion_text, false);
-
-            } else if (event.getArguments().get("cmd").equals("showCardRequest")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-
-                String name = obj.getUtfString("suggesting_player_name");
-                Card suggesting_suspect = new Card(TYPE_SUSPECT, obj.getInt("suggesting_player_suspectId"));
-                Card suspect = new Card(TYPE_SUSPECT, obj.getInt("suspect"));
-                Card weapon = new Card(TYPE_WEAPON, obj.getInt("weapon"));
-                Card room = new Card(TYPE_ROOM, obj.getInt("room"));
-
-                String suggestion_text = String.format(ClueMain.formatter, suggesting_suspect.toString(), suspect.toString(), weapon.toString(), room.toString());
-
-                ArrayList<Card> cards = new ArrayList<Card>();
-                cards.add(suspect);
-                cards.add(weapon);
-                cards.add(room);
-
-                PickCardsToShowDialog2 dialog = new PickCardsToShowDialog2(cards, suggestion_text, ClueMain.yourPlayer);
-                Card card_to_show = dialog.showDialog();
-
-                sendShowCardResponse(card_to_show, ClueMain.yourPlayer, name);
-
-            } else if (event.getArguments().get("cmd").equals("showCardResponse")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-
-                int ct = obj.getInt("card_type");
-
-                if (ct == -100) {
-                    ClueMain.turn.multiplayerGotShowCardResponse = true;
-                } else {
-                    String showing_player_name = obj.getUtfString("showing_player_name");
-                    String player_to_show = obj.getUtfString("player_to_show");
-                    int cv = obj.getInt("card_value");
-                    String text = showing_player_name;
-
-                    if (ct == -1) {
-                        text += " does not have a card to show.";
-                    } else if (ct == -99) {
-                        text += " showed a card to " + player_to_show;
-                    } else {
-                        text += " is showing " + new Card(ct, cv).toString();
-                    }
-
-                    setChatText(showing_player_name, text, false);
-                    showTimedDialogAlert(text);
-
-                    if (ct >= 0) {
-                        ClueMain.turn.multiplayerGotShowCardResponse = true;
-                    }
-
-                }
-
-            } else if (event.getArguments().get("cmd").equals("accusation")) {
-
-                SFSObject obj = (SFSObject) event.getArguments().get("params");
-
-                String name = obj.getUtfString("accusingPlayer");
-                int s = obj.getInt("suspect");
-                int w = obj.getInt("weapon");
-                int r = obj.getInt("room");
-                final boolean valid = obj.getBool("valid");
-
-                Card suspect = new Card(TYPE_SUSPECT, s);
-                Card weapon = new Card(TYPE_WEAPON, w);
-                Card room = new Card(TYPE_ROOM, r);
-
-                final String text = String.format(ClueMain.accusationFormatter, name, suspect.toString(), weapon.toString(), room.toString());
-
-                setChatText("GAME", text, false);
-                setChatText("GAME", "The accusation is " + valid + ".", false);
-
-                if (valid) {
-                    SoundEffect.GASP.play();
-                } else {
-                    int rand = new Random().nextInt(10);
-                    if (rand > 5) {
-                        SoundEffect.LAUGH.play();
-                    } else {
-                        SoundEffect.GIGGLE.play();
-                    }
-                    Player p = ClueMain.clue.getPlayer(name);
-                    if (p != null) {
-                        p.setHasMadeFalseAccusation();
-                    }
-                }
-
-                ClueMain.threadPoolExecutor.execute(new Runnable() {
-                    public void run() {
-                        JOptionPane.showMessageDialog(ClueMain.frame, text + "\n\nThe accusation is " + valid + ".", "Accusation", JOptionPane.PLAIN_MESSAGE);
-                    }
-                });
-
-            }
-
-        } else if (event.getType().equals(SFSEvent.ROOM_JOIN_ERROR)) {
-            System.out.println(textUserName.getText() + " ROOM_JOIN_ERROR: " + event.getArguments());
-
-            JOptionPane.showMessageDialog(ClueMain.frame, "" + event.getArguments().get("errorMessage"), "", JOptionPane.ERROR_MESSAGE);
-
-        } else if (event.getType().equals(SFSEvent.USER_ENTER_ROOM)) {
-			//fired when another user joins this room
-
-            System.out.println(textUserName.getText() + " USER_ENTER_ROOM: " + event.getArguments());
-
-            User user = (User) event.getArguments().get("user");
-            userListModel.addUser(user);
-
-            Room room = (Room) event.getArguments().get("room");
-
-            if (room != null && room.isJoined() && room.getUserCount() > 2) {
-                dealButton.setEnabled(true);
-                setChatText("GAME", "You may start the game and deal the cards.", false);
-            } else {
-                dealButton.setEnabled(false);
-                setChatText("GAME", "Waiting for more players to join.", false);
-            }
-
-        } // When a user leave the room the user list is updated
-        else if (event.getType().equals(SFSEvent.USER_EXIT_ROOM)) {
-            System.out.println(textUserName.getText() + " USER_EXIT_ROOM: " + event.getArguments());
-
-            User user = (User) event.getArguments().get("user");
-            userListModel.removeUser(user.getId());
-
-        } else if (event.getType().equals(SFSEvent.USER_VARIABLES_UPDATE)) {
-            System.out.println(textUserName.getText() + " USER_VARIABLES_UPDATE: " + event.getArguments());
-
-        } else if (event.getType().equals(SFSEvent.ROOM_VARIABLES_UPDATE)) {
-            System.out.println(textUserName.getText() + " ROOM_VARIABLES_UPDATE: " + event.getArguments());
-
-        } else if (event.getType().equals(SFSEvent.PUBLIC_MESSAGE)) {
-
-            User sender = (User) event.getArguments().get("sender");
-            String msg = event.getArguments().get("message").toString();
-            setChatText(sender.getName(), msg, false);
-
-        } else if (event.getType().equals(SFSEvent.PRIVATE_MESSAGE)) {
-
-            User sender = (User) event.getArguments().get("sender");
-            String msg = event.getArguments().get("message").toString();
-            setChatText(sender.getName(), msg, true);
-        }
-    }
-
     public void setChatText(String senderName, String msg, boolean pm) {
-        msg = MessageProcessor.parseSmiles(msg);
 
         if (!pm) {
             chatHistory.append("<b>[");
@@ -586,7 +98,7 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-	// <editor-fold defaultstate="collapsed"
+    // <editor-fold defaultstate="collapsed"
     // desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -714,25 +226,25 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         dialogNewRoom.getContentPane().setLayout(dialogNewRoomLayout);
         dialogNewRoomLayout.setHorizontalGroup(dialogNewRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                 dialogNewRoomLayout
-                .createSequentialGroup()
-                .addContainerGap()
-                .addGroup(
-                        dialogNewRoomLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(
-                                dialogNewRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false).addComponent(textNewRoomName, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(labelRoomName).addComponent(labelMaxUsers).addComponent(sliderNewRoomMaxUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(labelPassword).addComponent(textNewRoomPassword))
-                        .addGroup(dialogNewRoomLayout.createSequentialGroup().addComponent(buttonCreateRoomOk).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(buttonCreateRoomCancel)))
-                .addContainerGap(26, Short.MAX_VALUE)));
+                                dialogNewRoomLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(
+                                                dialogNewRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false).addComponent(textNewRoomName, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                                        .addComponent(labelRoomName).addComponent(labelMaxUsers).addComponent(sliderNewRoomMaxUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(labelPassword).addComponent(textNewRoomPassword))
+                                        .addGroup(dialogNewRoomLayout.createSequentialGroup().addComponent(buttonCreateRoomOk).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(buttonCreateRoomCancel)))
+                        .addContainerGap(26, Short.MAX_VALUE)));
         dialogNewRoomLayout.setVerticalGroup(dialogNewRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                 dialogNewRoomLayout.createSequentialGroup().addContainerGap().addComponent(labelRoomName).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textNewRoomName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18).addComponent(labelMaxUsers)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(sliderNewRoomMaxUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18).addComponent(labelPassword).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textNewRoomPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
-                .addGroup(dialogNewRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(buttonCreateRoomOk).addComponent(buttonCreateRoomCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                        .addComponent(textNewRoomName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18).addComponent(labelMaxUsers)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(sliderNewRoomMaxUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18).addComponent(labelPassword).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textNewRoomPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
+                        .addGroup(dialogNewRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(buttonCreateRoomOk).addComponent(buttonCreateRoomCancel))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         dialogPrivate.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         dialogPrivate.setTitle("Send Private Message");
@@ -760,17 +272,17 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         dialogPrivate.getContentPane().setLayout(dialogPrivateLayout);
         dialogPrivateLayout.setHorizontalGroup(dialogPrivateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                 dialogPrivateLayout
-                .createSequentialGroup()
-                .addContainerGap()
-                .addGroup(
-                        dialogPrivateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(textPrivateMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE).addComponent(labelPrivateMessage)
-                        .addGroup(dialogPrivateLayout.createSequentialGroup().addComponent(buttonSendPrivateOk).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(buttonSendPrivateCancel)))
-                .addContainerGap()));
+                        .createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                dialogPrivateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(textPrivateMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE).addComponent(labelPrivateMessage)
+                                        .addGroup(dialogPrivateLayout.createSequentialGroup().addComponent(buttonSendPrivateOk).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(buttonSendPrivateCancel)))
+                        .addContainerGap()));
         dialogPrivateLayout.setVerticalGroup(dialogPrivateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                 dialogPrivateLayout.createSequentialGroup().addContainerGap().addComponent(labelPrivateMessage).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textPrivateMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
-                .addGroup(dialogPrivateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(buttonSendPrivateOk).addComponent(buttonSendPrivateCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                        .addComponent(textPrivateMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
+                        .addGroup(dialogPrivateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(buttonSendPrivateOk).addComponent(buttonSendPrivateCancel))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         dialogJoinPrivateRoom.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         dialogJoinPrivateRoom.setTitle("Join Private Room");
@@ -798,18 +310,18 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         dialogJoinPrivateRoom.getContentPane().setLayout(dialogJoinPrivateRoomLayout);
         dialogJoinPrivateRoomLayout.setHorizontalGroup(dialogJoinPrivateRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                 dialogJoinPrivateRoomLayout
-                .createSequentialGroup()
-                .addContainerGap()
-                .addGroup(
-                        dialogJoinPrivateRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(textJoinPrivatePassword, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelPrivateRoomPassword)
-                        .addGroup(dialogJoinPrivateRoomLayout.createSequentialGroup().addComponent(buttonJoinPrivateOk).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(buttonJoinPrivateCancel)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                        .createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                dialogJoinPrivateRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(textJoinPrivatePassword, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelPrivateRoomPassword)
+                                        .addGroup(dialogJoinPrivateRoomLayout.createSequentialGroup().addComponent(buttonJoinPrivateOk).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(buttonJoinPrivateCancel)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         dialogJoinPrivateRoomLayout.setVerticalGroup(dialogJoinPrivateRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                 dialogJoinPrivateRoomLayout.createSequentialGroup().addContainerGap().addComponent(labelPrivateRoomPassword).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textJoinPrivatePassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
-                .addGroup(dialogJoinPrivateRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(buttonJoinPrivateOk).addComponent(buttonJoinPrivateCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                        .addComponent(textJoinPrivatePassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
+                        .addGroup(dialogJoinPrivateRoomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(buttonJoinPrivateOk).addComponent(buttonJoinPrivateCancel))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         dialogLogin.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         dialogLogin.setTitle("Login");
@@ -848,31 +360,31 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         dialogLogin.getContentPane().setLayout(dialogLoginLayout);
         dialogLoginLayout.setHorizontalGroup(
                 dialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(dialogLoginLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(dialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(dialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(textUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(labelUserName)
-                                        .addComponent(buttonLogin)
-                                        .addComponent(serverIPTextField))
-                                .addComponent(ipLabel))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(dialogLoginLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(dialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(dialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(textUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(labelUserName)
+                                                .addComponent(buttonLogin)
+                                                .addComponent(serverIPTextField))
+                                        .addComponent(ipLabel))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dialogLoginLayout.setVerticalGroup(
                 dialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(dialogLoginLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(labelUserName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textUserName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ipLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(serverIPTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(buttonLogin)
-                        .addGap(30, 30, 30))
+                        .addGroup(dialogLoginLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(labelUserName)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(textUserName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ipLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(serverIPTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(buttonLogin)
+                                .addGap(30, 30, 30))
         );
         dialogLogin.pack();
 
@@ -899,25 +411,25 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         dialogAlert.getContentPane().setLayout(dialogAlertLayout);
         dialogAlertLayout.setHorizontalGroup(
                 dialogAlertLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(dialogAlertLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(alertTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonAlertOk, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addGroup(dialogAlertLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(alertTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(buttonAlertOk, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         dialogAlertLayout.setVerticalGroup(
                 dialogAlertLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(dialogAlertLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(dialogAlertLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(dialogAlertLayout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(buttonAlertOk))
-                                .addGroup(dialogAlertLayout.createSequentialGroup()
-                                        .addComponent(alertTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 14, Short.MAX_VALUE)))
-                        .addContainerGap())
+                        .addGroup(dialogAlertLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(dialogAlertLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(dialogAlertLayout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(buttonAlertOk))
+                                        .addGroup(dialogAlertLayout.createSequentialGroup()
+                                                .addComponent(alertTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 14, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         dialogAlert.pack();
 
@@ -1110,124 +622,124 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                .addComponent(LoginButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(singlePlayerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(accuseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(endTurnButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addGroup(layout.createSequentialGroup()
-                                        .addComponent(labelChatHistory, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(20, 20, 20)
-                                        .addComponent(LeaveRoomButton))
-                                .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                .addComponent(scarletRadio)
-                                                .addGroup(layout.createSequentialGroup()
-                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                .addComponent(whiteRadio)
-                                                                .addComponent(greenRadio, javax.swing.GroupLayout.Alignment.LEADING))
-                                                        .addGap(4, 4, 4)))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(mustardRadio)
-                                                .addComponent(plumRadio)
-                                                .addComponent(peacockRadio)))
-                                .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(labelUserList)
-                                                .addComponent(scrollPaneUserList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                                .addComponent(dealButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(10, 10, 10)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(labelRoomList)
-                                                .addComponent(buttonJoin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(scrollPaneRoomList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                                .addComponent(buttonNewRoom)))
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(buttonLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addComponent(LoginButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(singlePlayerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(exitGameButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addComponent(scrollPaneChatHistory, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(textChatMessage, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(buttonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(buttonSendPrivate)))
-                                .addGroup(layout.createSequentialGroup()
-                                        .addComponent(PlayerIconLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(PlayerDescriptionArea, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(accuseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(endTurnButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(labelChatHistory, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20)
+                                                .addComponent(LeaveRoomButton))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addComponent(scarletRadio)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addComponent(whiteRadio)
+                                                                        .addComponent(greenRadio, javax.swing.GroupLayout.Alignment.LEADING))
+                                                                .addGap(4, 4, 4)))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(mustardRadio)
+                                                        .addComponent(plumRadio)
+                                                        .addComponent(peacockRadio)))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(labelUserList)
+                                                        .addComponent(scrollPaneUserList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                        .addComponent(dealButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(10, 10, 10)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(labelRoomList)
+                                                        .addComponent(buttonJoin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(scrollPaneRoomList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                        .addComponent(buttonNewRoom)))
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                        .addComponent(buttonLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(exitGameButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(scrollPaneChatHistory, javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(textChatMessage, javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                        .addComponent(buttonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(buttonSendPrivate)))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(PlayerIconLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(PlayerDescriptionArea, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(singlePlayerButton)
-                                .addComponent(endTurnButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(LoginButton)
-                                .addComponent(accuseButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(PlayerIconLabel)
-                                .addComponent(PlayerDescriptionArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(scarletRadio)
-                                .addComponent(mustardRadio))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(plumRadio)
-                                .addComponent(greenRadio))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(peacockRadio)
-                                .addComponent(whiteRadio))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelUserList)
-                                .addComponent(labelRoomList))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(scrollPaneRoomList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addComponent(scrollPaneUserList, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addComponent(buttonJoin)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(buttonNewRoom))
-                                .addComponent(dealButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(LeaveRoomButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelChatHistory)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(scrollPaneChatHistory, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textChatMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(buttonSend)
-                                .addComponent(buttonSendPrivate))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(buttonLogout)
-                                .addComponent(exitGameButton))
-                        .addGap(48, 48, 48))
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(singlePlayerButton)
+                                        .addComponent(endTurnButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(LoginButton)
+                                        .addComponent(accuseButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(PlayerIconLabel)
+                                        .addComponent(PlayerDescriptionArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(scarletRadio)
+                                        .addComponent(mustardRadio))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(plumRadio)
+                                        .addComponent(greenRadio))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(peacockRadio)
+                                        .addComponent(whiteRadio))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelUserList)
+                                        .addComponent(labelRoomList))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(scrollPaneRoomList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addComponent(scrollPaneUserList, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(buttonJoin)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(buttonNewRoom))
+                                        .addComponent(dealButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(LeaveRoomButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelChatHistory)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(scrollPaneChatHistory, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(textChatMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(buttonSend)
+                                        .addComponent(buttonSendPrivate))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(buttonLogout)
+                                        .addComponent(exitGameButton))
+                                .addGap(48, 48, 48))
         );
 
     }// </editor-fold>//GEN-END:initComponents
@@ -1237,10 +749,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
      * not the current, otherwise disables it.
      */
     private void listRoomsValueChanged(javax.swing.event.ListSelectionEvent evt) {// GEN-FIRST:event_listRoomsValueChanged
-        Room room = (Room) listRooms.getSelectedValue();
-        if (room != null) {
-            buttonJoin.setEnabled(true);
-        }
 
     }// GEN-LAST:event_listRoomsValueChanged
 
@@ -1250,27 +758,13 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
      */
     private void buttonJoinActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonJoinActionPerformed
 
-        Room room = (Room) listRooms.getSelectedValue();
-
-        //send validate if the room can be joined with the selected character here
-        if (room != null) {
-            ISFSObject obj = new SFSObject();
-            obj.putUtfString("character", mySelectedCharacter);
-            obj.putUtfString("room", room.getName());
-            sfs.send(new ExtensionRequest("validateJoinRoom", obj, null));
-        }
-
     }// GEN-LAST:event_buttonJoinActionPerformed
 
     /**
      * Sends public message to the server.
      */
     private void buttonSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonSendActionPerformed
-        if (textChatMessage.getText().length() > 0) {
-            sfs.send(new PublicMessageRequest(textChatMessage.getText()));
-            textChatMessage.setText("");
-            textChatMessage.requestFocus();
-        }
+
     }// GEN-LAST:event_buttonSendActionPerformed
 
     /**
@@ -1278,12 +772,7 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
      * the user is not the current user, otherwise disables it.
      */
     private void listUsersValueChanged(javax.swing.event.ListSelectionEvent evt) {// GEN-FIRST:event_listUsersValueChanged
-        User user = (User) listUsers.getSelectedValue();
-        if (user != null && user != sfs.getMySelf()) {
-            buttonSendPrivate.setEnabled(true);
-        } else {
-            buttonSendPrivate.setEnabled(false);
-        }
+
     }// GEN-LAST:event_listUsersValueChanged
 
     /**
@@ -1315,11 +804,7 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         String msg = textPrivateMessage.getText();
         if (msg.length() > 0) {
             dialogPrivate.dispose();
-            User recipient = (User) listUsers.getSelectedValue();
-            if (recipient != null) {
-                sfs.send(new PrivateMessageRequest(msg, recipient.getId()));
 
-            }
         }
     }// GEN-LAST:event_buttonSendPrivateOkActionPerformed
 
@@ -1344,19 +829,11 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         String roomName = textNewRoomName.getText();
         if (roomName.length() > 0) {
             dialogNewRoom.dispose();
-			// Gets the new room properties for the user input
+            // Gets the new room properties for the user input
             // and sends them to the server.
             int maxUsers = sliderNewRoomMaxUsers.getValue();
             String password = new String(textNewRoomPassword.getPassword());
 
-            // Create a new chat Room Room
-            RoomSettings settings = new RoomSettings(roomName);
-            settings.setMaxUsers(maxUsers);
-            settings.setGroupId("chats");
-            settings.setPassword(password);
-            settings.setGame(true);
-
-            sfs.send(new CreateRoomRequest(settings));
         }
     }// GEN-LAST:event_buttonCreateRoomOkActionPerformed
 
@@ -1377,9 +854,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
             // Gets the room password
             String password = new String(textJoinPrivatePassword.getPassword());
             // Joins the user to the currently selected room
-            Room room = (Room) listRooms.getSelectedValue();
-
-            sfs.send(new JoinRoomRequest(room.getId(), password));
 
         }
     }// GEN-LAST:event_buttonJoinPrivateOkActionPerformed
@@ -1413,7 +887,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         mySelectedCharacter = plum.toString();
         PlayerIconLabel.setIcon(PlayerIcon.PLUM.get());
         PlayerDescriptionArea.setText(Card.descriptions[SUSPECT_PLUM]);
-        setMyCharacterUserVar();
 
     }// GEN-LAST:event_plumRadioItemStateChanged
 
@@ -1421,7 +894,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         mySelectedCharacter = peacock.toString();
         PlayerIconLabel.setIcon(PlayerIcon.PEACOCK.get());
         PlayerDescriptionArea.setText(Card.descriptions[SUSPECT_PEACOCK]);
-        setMyCharacterUserVar();
 
     }// GEN-LAST:event_peacockRadioItemStateChanged
 
@@ -1429,7 +901,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         mySelectedCharacter = white.toString();
         PlayerIconLabel.setIcon(PlayerIcon.WHITE.get());
         PlayerDescriptionArea.setText(Card.descriptions[SUSPECT_WHITE]);
-        setMyCharacterUserVar();
 
     }// GEN-LAST:event_whiteRadioItemStateChanged
 
@@ -1437,7 +908,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         mySelectedCharacter = green.toString();
         PlayerIconLabel.setIcon(PlayerIcon.GREEN.get());
         PlayerDescriptionArea.setText(Card.descriptions[SUSPECT_GREEN]);
-        setMyCharacterUserVar();
 
     }// GEN-LAST:event_greenRadioItemStateChanged
 
@@ -1445,7 +915,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         mySelectedCharacter = scarlet.toString();
         PlayerIconLabel.setIcon(PlayerIcon.SCARLET.get());
         PlayerDescriptionArea.setText(Card.descriptions[SUSPECT_SCARLET]);
-        setMyCharacterUserVar();
 
     }// GEN-LAST:event_scarletRadioItemStateChanged
 
@@ -1453,16 +922,10 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         mySelectedCharacter = mustard.toString();
         PlayerIconLabel.setIcon(PlayerIcon.MUSTARD.get());
         PlayerDescriptionArea.setText(Card.descriptions[SUSPECT_MUSTARD]);
-        setMyCharacterUserVar();
 
     }// GEN-LAST:event_mustardRadioItemStateChanged
 
     private void dealButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dealButtonActionPerformed
-
-        Room room = (Room) listRooms.getSelectedValue();
-        ISFSObject obj = new SFSObject();
-        obj.putUtfString("room", room.getName());
-        sfs.send(new ExtensionRequest("deal", obj, null));
 
     }//GEN-LAST:event_dealButtonActionPerformed
 
@@ -1482,10 +945,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         accuseButton.setEnabled(false);
         endTurnButton.setBackground(Color.white);
 
-        ISFSObject obj = new SFSObject();
-        if (sfs.isConnected()) {
-            sfs.send(new ExtensionRequest("endTurn", obj, null));
-        }
     }//GEN-LAST:event_endTurnButtonActionPerformed
 
     private void accuseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accuseButtonActionPerformed
@@ -1499,119 +958,22 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
             return;
         }
 
-        if (!isConnected()) {
-            boolean validAccusation = ClueMain.clue.matchesVictimSet(accusation);
-            if (validAccusation) {
-                SoundEffect.GASP.play();
-                ClueMain.turn.gameOver = true;
-            } else {
-                int rand = new Random().nextInt(10);
-                if (rand > 5) {
-                    SoundEffect.LAUGH.play();
-                } else {
-                    SoundEffect.GIGGLE.play();
-                }
-                ClueMain.yourPlayer.setHasMadeFalseAccusation();
-            }
-            JOptionPane.showMessageDialog(ClueMain.frame, "Your accusation is " + validAccusation + ".", "Accusation Validation", JOptionPane.PLAIN_MESSAGE);
+        boolean validAccusation = ClueMain.clue.matchesVictimSet(accusation);
+        if (validAccusation) {
+            SoundEffect.GASP.play();
+            ClueMain.turn.gameOver = true;
         } else {
-            Card suspect = null;
-            Card weapon = null;
-            Card room = null;
-
-            for (Card card : accusation) {
-                if (card.getType() == TYPE_SUSPECT) {
-                    suspect = card;
-                }
-                if (card.getType() == TYPE_WEAPON) {
-                    weapon = card;
-                }
-                if (card.getType() == TYPE_ROOM) {
-                    room = card;
-                }
+            int rand = new Random().nextInt(10);
+            if (rand > 5) {
+                SoundEffect.LAUGH.play();
+            } else {
+                SoundEffect.GIGGLE.play();
             }
-
-            //send the accusation the server for validation
-            ISFSObject obj = new SFSObject();
-            obj.putInt("suspect", suspect.getValue());
-            obj.putInt("room", room.getValue());
-            obj.putInt("weapon", weapon.getValue());
-
-            sfs.send(new ExtensionRequest("accusation", obj, null));
+            ClueMain.yourPlayer.setHasMadeFalseAccusation();
         }
+        JOptionPane.showMessageDialog(ClueMain.frame, "Your accusation is " + validAccusation + ".", "Accusation Validation", JOptionPane.PLAIN_MESSAGE);
 
     }//GEN-LAST:event_accuseButtonActionPerformed
-
-    public void sendMoveEvent(Player player, int fx, int fy, int tx, int ty, Color color, boolean secretPassage) {
-        if (!isConnected()) {
-            return;
-        }
-
-        ISFSObject obj = new SFSObject();
-        obj.putUtfString("player", player.getPlayerName());
-        obj.putInt("character", player.getSuspectNumber());
-        obj.putInt("from-x", fx);
-        obj.putInt("from-y", fy);
-        obj.putInt("to-x", tx);
-        obj.putInt("to-y", ty);
-        obj.putInt("playerColor", color.getRGB());
-        obj.putBool("secretPassage", secretPassage);
-
-        sfs.send(new ExtensionRequest("move", obj, null));
-
-    }
-
-    public void sendDiceRollEvent(int roll1, int roll2) {
-        if (!isConnected()) {
-            return;
-        }
-
-        ISFSObject obj = new SFSObject();
-        obj.putInt("roll1", roll1);
-        obj.putInt("roll2", roll2);
-
-        sfs.send(new ExtensionRequest("diceRoll", obj, null));
-
-    }
-
-    public void sendSetSuggestionEvent(Card suspect, Card weapon, Card room, Player suggesting_player) {
-
-        if (!isConnected()) {
-            return;
-        }
-
-        ISFSObject obj = new SFSObject();
-        obj.putUtfString("suggesting_player_name", suggesting_player.getPlayerName());
-        obj.putInt("suggesting_player_suspectId", suggesting_player.getSuspectNumber());
-        obj.putInt("suspect", suspect.getValue());
-        obj.putInt("room", room.getValue());
-        obj.putInt("weapon", weapon.getValue());
-
-        sfs.send(new ExtensionRequest("suggestion", obj, null));
-
-    }
-
-    public void sendShowCardResponse(Card card_to_show, Player showing_player, String player_to_show) {
-        if (!isConnected()) {
-            return;
-        }
-
-        int card_value = -1;
-        int card_type = -1;
-        if (card_to_show != null) {
-            card_type = card_to_show.getType();
-            card_value = card_to_show.getValue();
-        }
-
-        ISFSObject obj = new SFSObject();
-        obj.putUtfString("player_to_show", player_to_show);
-        obj.putUtfString("showing_player_name", showing_player.getPlayerName());
-        obj.putInt("showing_player_suspectId", showing_player.getSuspectNumber());
-        obj.putInt("card_value", card_value);
-        obj.putInt("card_type", card_type);
-
-        sfs.send(new ExtensionRequest("showCardResponse", obj, null));
-    }
 
     public void setYourMultiplayer() {
         Player player = null;
@@ -1688,13 +1050,6 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
 
     }
 
-    public void setMyCharacterUserVar() {
-        //set the character in my user
-        List<UserVariable> userVars = new ArrayList<UserVariable>();
-        userVars.add(new SFSUserVariable("character", mySelectedCharacter));
-        sfs.send(new SetUserVariablesRequest(userVars));
-    }
-
     public class TimedDialogAlert extends javax.swing.JDialog {
 
         public void start() {
@@ -1727,19 +1082,13 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
         buttonLogout.setEnabled(true);
         singlePlayerButton.setEnabled(false);
 
-        sfs.connect(serverIPTextField.getText(), 9933);
-
     }//GEN-LAST:event_LoginButtonActionPerformed
 
     private void buttonLogoutActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonLogoutActionPerformed
 
-        sfs.send(new LogoutRequest());
-
     }// GEN-LAST:event_buttonLogoutActionPerformed
 
     private void LeaveRoomButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_LeaveRoomButtonActionPerformed
-
-        sfs.send(new LeaveRoomRequest(sfs.getLastJoinedRoom()));
 
         buttonJoin.setEnabled(true);
         LeaveRoomButton.setEnabled(false);
@@ -1754,9 +1103,7 @@ public class MultiplayerFrame extends javax.swing.JPanel implements IEventListen
     }// GEN-LAST:event_LeaveRoomButtonActionPerformed
 
     private void exitGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitGameButtonActionPerformed
-        if (isConnected()) {
-            buttonLogoutActionPerformed(null);
-        }
+
         System.exit(0);
     }//GEN-LAST:event_exitGameButtonActionPerformed
 

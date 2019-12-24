@@ -5,10 +5,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import java.util.ArrayList;
-import org.antinori.astar.AStar;
-import org.antinori.astar.ClueMap;
-import org.antinori.astar.Location;
-import org.antinori.astar.PathFinder;
+import gdx.clue.astar.AStar;
+import gdx.clue.astar.Location;
+import gdx.clue.astar.PathFinder;
 
 public class ClueMain extends Game {
 

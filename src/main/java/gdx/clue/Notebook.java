@@ -1,18 +1,18 @@
 package gdx.clue;
 
-import static org.antinori.game.Card.NUM_ROOMS;
-import static org.antinori.game.Card.NUM_SUSPECTS;
-import static org.antinori.game.Card.NUM_WEAPONS;
-import static org.antinori.game.Card.TOTAL;
-import static org.antinori.game.Card.TYPE_ROOM;
-import static org.antinori.game.Card.TYPE_SUSPECT;
-import static org.antinori.game.Card.TYPE_WEAPON;
+import static gdx.clue.Card.NUM_ROOMS;
+import static gdx.clue.Card.NUM_SUSPECTS;
+import static gdx.clue.Card.NUM_WEAPONS;
+import static gdx.clue.Card.TOTAL;
+import static gdx.clue.Card.TYPE_ROOM;
+import static gdx.clue.Card.TYPE_SUSPECT;
+import static gdx.clue.Card.TYPE_WEAPON;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
-import org.antinori.astar.Location;
+import gdx.clue.astar.Location;
 
 public class Notebook {
 

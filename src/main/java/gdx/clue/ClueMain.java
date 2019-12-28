@@ -3,22 +3,23 @@ package gdx.clue;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import java.util.ArrayList;
-import gdx.clue.astar.AStar;
-import gdx.clue.astar.Location;
-import gdx.clue.astar.PathFinder;
+import static gdx.clue.Card.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClueMain extends Game {
-
-    public static Clue CLUE_GAME;
-    public static ClueMap MAP;
 
     public static final int TILE_DIM = 32;
     public static final int SCREEN_DIM_WIDTH = TILE_DIM * 40;//8 + 24 + 8
@@ -26,13 +27,7 @@ public class ClueMain extends Game {
     public static final int VIEWPORT_DIM_WIDTH = TILE_DIM * 24;
     public static final int VIEWPORT_DIM_HEIGHT = TILE_DIM * 25;
 
-    public static PathFinder<Location> PATHFINDER;
-
     public static final Dice DICE = new Dice(1, 6);
-
-    public static ArrayList<Player> PLAYERS = null;
-    public static Player currentTurnPlayer = null;
-    public static Player yourPlayer = null;
 
     public static boolean difficult_setting = false;
 
@@ -40,9 +35,17 @@ public class ClueMain extends Game {
     public static final String accusationFormatter = "%s makes\nan accusation that\n%s\ncommitted the crime\nwith the %s\nin the %s.";
 
     public static Skin skin;
-    public static BitmapFont font_14;
-    public static BitmapFont font_18;
-    public static BitmapFont font_24;
+    public static BitmapFont FONT_14;
+    public static BitmapFont FONT_18;
+    public static BitmapFont FONT_24;
+    public static BitmapFont FONT_48;
+
+    public static TextureRegion[][] DICE_TEXTURES;
+    public static final Map<Color, Texture> CIRCLES = new HashMap<>();
+    public static Texture ROOMS;
+    public static Texture TILE_BROWN;
+    public static Texture TILE_LIGHT_GRAY;
+    public static Texture TILE_DARK_GREEN;
 
     public static void main(String[] args) {
 
@@ -62,13 +65,18 @@ public class ClueMain extends Game {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = 14;
-        font_14 = generator.generateFont(parameter);
+        FONT_14 = generator.generateFont(parameter);
 
         parameter.size = 18;
-        font_18 = generator.generateFont(parameter);
-        
+        FONT_18 = generator.generateFont(parameter);
+
         parameter.size = 24;
-        font_24 = generator.generateFont(parameter);
+        parameter.color = Color.YELLOW;
+        FONT_24 = generator.generateFont(parameter);
+        
+        parameter.size = 48;
+        parameter.color = Color.FOREST;
+        FONT_48 = generator.generateFont(parameter);
 
         parameter.size = 14;
         parameter.color = Color.BLACK;
@@ -78,15 +86,96 @@ public class ClueMain extends Game {
 
         skin = new Skin(Gdx.files.classpath("assets/skin/uiskin.json"));
         skin.remove("default-font", BitmapFont.class);
-        skin.add("default-font", font_14, BitmapFont.class);
+        skin.add("default-font", FONT_14, BitmapFont.class);
         skin.add("small-font", small, BitmapFont.class);
         Label.LabelStyle ls = new Label.LabelStyle();
         skin.add("small-font", ls, Label.LabelStyle.class);
         ls.font = small;
 
-        MAP = new ClueMap();
-        PATHFINDER = new AStar<>();
+        ROOMS = new Texture(Gdx.files.classpath("room-sheet.png"));
 
+        DICE_TEXTURES = TextureRegion.split(new Texture(Gdx.files.classpath("DiceSheet.png")), 51, 51);
+
+        TILE_BROWN = createSquare(Color.FIREBRICK, Color.BROWN, TILE_DIM, TILE_DIM);
+        TILE_LIGHT_GRAY = createSquare(Color.LIGHT_GRAY, Color.GRAY, TILE_DIM, TILE_DIM);
+        TILE_DARK_GREEN = createSquare(Color.GREEN, Color.FOREST, TILE_DIM, TILE_DIM);
+
+        CIRCLES.put(Color.RED, createCircle(Color.RED, TILE_DIM, TILE_DIM, 16));
+        CIRCLES.put(Color.GREEN, createCircle(Color.GREEN, TILE_DIM, TILE_DIM, 16));
+        CIRCLES.put(Color.BLUE, createCircle(Color.BLUE, TILE_DIM, TILE_DIM, 16));
+        CIRCLES.put(Color.BLACK, createCircle(Color.BLACK, TILE_DIM, TILE_DIM, 16));
+        CIRCLES.put(Color.MAGENTA, createCircle(Color.MAGENTA, TILE_DIM, TILE_DIM, 16));
+        CIRCLES.put(Color.YELLOW, createCircle(Color.YELLOW, TILE_DIM, TILE_DIM, 16));
+        CIRCLES.put(Color.PINK, createCircle(Color.PINK, TILE_DIM, TILE_DIM, 21));
+
+        GameScreen sc = new GameScreen();
+        setScreen(sc);
+
+    }
+
+    public static final FileHandleResolver CLASSPTH_RSLVR = new FileHandleResolver() {
+        @Override
+        public FileHandle resolve(String fileName) {
+            return Gdx.files.classpath(fileName);
+        }
+    };
+
+    private static Texture createGrid() {
+
+        int imgWidth = TILE_DIM * 24 + 1;
+        int imgHeight = TILE_DIM * 25;
+
+        Pixmap pix = new Pixmap(imgWidth, imgHeight, Pixmap.Format.RGBA8888);
+        //pix.setColor(Color.LIGHT_GRAY);
+        //pix.fill();
+        pix.setColor(Color.GRAY);
+        for (int x = 0; x < imgWidth; x += TILE_DIM) {
+            pix.drawLine(x, 0, x, imgHeight);
+        }
+        for (int y = 0; y < imgHeight; y += TILE_DIM) {
+            pix.drawLine(0, y, imgWidth, y);
+        }
+        return new Texture(pix);
+    }
+
+    private static Texture createCircle(Color color, int w, int h, int radius) {
+        Pixmap pix = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        pix.setColor(color);
+        pix.drawCircle(w, h, radius);
+        return new Texture(pix);
+    }
+
+    private static Texture createSquare(Color color, Color border, int w, int h) {
+        Pixmap pix = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        pix.setColor(border);
+        pix.fill();
+        pix.setColor(color);
+        pix.fillRectangle(1, 1, w - 2, h - 2);
+        return new Texture(pix);
+    }
+
+    public static enum PlayerIcon {
+
+        SCARLET("MsScarlett1.png"),
+        MUSTARD("ColMustard1.png"),
+        GREEN("MrGreen1.png"),
+        WHITE("MrsWhite1.png"),
+        PLUM("ProfPlum1.png"),
+        PEACOCK("MrsPeacock1.png");
+
+        private Texture image;
+
+        PlayerIcon(String filename) {
+            try {
+                image = new Texture(Gdx.files.internal(filename));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public Texture texture() {
+            return image;
+        }
     }
 
 }

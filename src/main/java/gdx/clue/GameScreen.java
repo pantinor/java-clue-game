@@ -4,66 +4,56 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import static gdx.clue.Card.*;
 import static gdx.clue.ClueMain.TILE_DIM;
 import static gdx.clue.ClueMain.VIEWPORT_DIM_HEIGHT;
-import static gdx.clue.ClueMain.VIEWPORT_DIM_WIDTH;
+import gdx.clue.astar.AStar;
+import gdx.clue.astar.Location;
+import gdx.clue.astar.PathFinder;
+import java.util.ArrayList;
 
 public class GameScreen implements Screen, InputProcessor {
 
-    private float time = 0;
-
-    private final Stage stage, mapStage;
-    private final Batch batch, mapBatch;
-    private final OrthogonalTiledMapRenderer renderer;
-    private final OrthographicCamera camera;
-    private final Viewport mapViewport;
+    private final Stage stage;
+    private final Batch batch;
     private final Viewport viewport = new ScreenViewport();
     InputMultiplexer input;
+    private Clue game;
+    public ClueMap map;
+    public PathFinder<Location> pathfinder;
+    public ArrayList<Player> players = null;
+    public Player currentTurnPlayer = null;
+    public Player yourPlayer = null;
 
-    public int mapPixelHeight;
-    private final Vector3 newMapPixelCoords = new Vector3();
-    private final Vector2 currentMousePos = new Vector2();
+    private final Vector3 screenPos = new Vector3();
+    private final Vector3 gridPos = new Vector3();
 
-    private final Clue main;
+    private final RoomIconPlacement playerIconPlacement;
 
-    public GameScreen(Clue main) {
-        this.main = main;
-
+    public GameScreen() {
+        game = new Clue();
+        map = new ClueMap();
+        pathfinder = new AStar<>();
         stage = new Stage(viewport);
         batch = new SpriteBatch();
-
-        camera = new OrthographicCamera(VIEWPORT_DIM_WIDTH, VIEWPORT_DIM_HEIGHT);
-        mapViewport = new ScreenViewport(camera);
-
-        renderer = null;//new OrthogonalTiledMapRenderer(tmxMap, 1f);
-        mapBatch = null;//renderer.getBatch();
-        mapStage = null;//new Stage(mapViewport, mapBatch);
-
-        mapPixelHeight = TILE_DIM * 15;
-        setMapPixelCoords(14, 9);
-
         input = new InputMultiplexer(this, stage);
+        playerIconPlacement = new RoomIconPlacement();
     }
 
-    public void setMapPixelCoords(float x, float y) {
-        newMapPixelCoords.x = x * TILE_DIM;
-        newMapPixelCoords.y = mapPixelHeight - y * TILE_DIM;
-    }
-
-    private void setCurrentMapCoords(Vector3 v) {
-        Vector3 tmp = camera.unproject(new Vector3(TILE_DIM * 7, TILE_DIM * 4, 0), TILE_DIM, TILE_DIM, VIEWPORT_DIM_WIDTH, VIEWPORT_DIM_HEIGHT);
-        v.set(Math.round(tmp.x / TILE_DIM) - 1, ((mapPixelHeight - Math.round(tmp.y) - TILE_DIM) / TILE_DIM) - 0, 0);
+    private void setGridCoordinates() {
+        gridPos.set(
+                Math.round(((screenPos.x - TILE_DIM * 8) / TILE_DIM) - 0.5f),
+                Math.round(((screenPos.y - TILE_DIM) / TILE_DIM) + 0.5f),
+                0);
     }
 
     @Override
@@ -74,43 +64,52 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-        time += delta;
 
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        camera.position.set(
-                newMapPixelCoords.x + 0 * TILE_DIM + 48,
-                newMapPixelCoords.y - 1 * TILE_DIM + 48,
-                0);
-
-        camera.update();
-
-        renderer.setView(camera);
-
-        renderer.setView(camera.combined,
-                camera.position.x - TILE_DIM * 7,
-                camera.position.y - TILE_DIM * 4,
-                VIEWPORT_DIM_WIDTH, VIEWPORT_DIM_HEIGHT);
-
-        renderer.render();
-
-        mapBatch.setProjectionMatrix(camera.combined);
-        mapBatch.begin();
-        mapBatch.end();
-
-        mapStage.act();
-        mapStage.draw();
-
         batch.begin();
 
-        //grid.draw(batch);
-        //TextureRegion tr = (TextureRegion) ActorType.PLAYER1.getAnimation(Actor.NORTH).getKeyFrame(time, true);
-        //batch.draw(tr, 7 * TILE_DIM + 0, 4 * TILE_DIM + 0);
-        //Vector3 v = new Vector3();
-        //setCurrentMapCoords(v);
-        //Life.font.draw(batch, String.format("%s, %s\n", v.x, v.y), 20, 20);
-        //Life.hud.render(batch, game);
+        batch.draw(ClueMain.ROOMS, TILE_DIM * 8, 0);
+
+        for (int i = 0; i < map.getXSize(); i++) {
+            for (int j = 0; j < map.getYSize(); j++) {
+                Location t = map.getLocation(i, j);
+                if (t.getBlocked()) {
+                    //nothing
+                } else if (t.getHighlighted()) {
+                    batch.draw(ClueMain.TILE_DARK_GREEN, TILE_DIM * 8 + i * TILE_DIM, VIEWPORT_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
+                } else if (t.isRoom()) {
+                    batch.draw(ClueMain.TILE_BROWN, TILE_DIM * 8 + i * TILE_DIM, VIEWPORT_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
+                } else {
+                    batch.draw(ClueMain.TILE_LIGHT_GRAY, TILE_DIM * 8 + i * TILE_DIM, VIEWPORT_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
+                }
+            }
+        }
+
+        ClueMain.FONT_14.draw(batch, String.format("%s, %s\n", gridPos.x, gridPos.y), 20, 20);
+
+        drawPlayerLocation(batch, SUSPECT_SCARLET);
+        drawPlayerLocation(batch, SUSPECT_MUSTARD);
+        drawPlayerLocation(batch, SUSPECT_GREEN);
+        drawPlayerLocation(batch, SUSPECT_PLUM);
+        drawPlayerLocation(batch, SUSPECT_WHITE);
+        drawPlayerLocation(batch, SUSPECT_PEACOCK);
+
+        playerIconPlacement.drawIcons(batch);
+
+        drawRoomLabel(batch, "Kitchen", 50, 75);
+        drawRoomLabel(batch, "Ballroom", 323, 128);
+        drawRoomLabel(batch, "Conservatory", 610, 75);
+        drawRoomLabel(batch, "Dining Room", 50, 400);
+        drawRoomLabel(batch, "Billiard Room", 621, 335);
+        drawRoomLabel(batch, "Library", 610, 529);
+        drawRoomLabel(batch, "Study", 610, 712);
+        drawRoomLabel(batch, "Hall", 370, 712);
+        drawRoomLabel(batch, "Lounge", 100, 712);
+        
+        ClueMain.FONT_48.draw(batch, "Clue", TILE_DIM * 8 + 360, VIEWPORT_DIM_HEIGHT - 423);
+
         batch.end();
 
         stage.act();
@@ -119,7 +118,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        mapViewport.update(width, height);
     }
 
     @Override
@@ -155,6 +153,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        screenPos.x = screenX;
+        screenPos.y = screenY;
+        setGridCoordinates();
         return false;
     }
 
@@ -177,24 +178,48 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean scrolled(int amount) {
         return false;
     }
-    
-    private static Pixmap createGrid() {
 
-        int imgWidth = TILE_DIM * 24;
-        int imgHeight = TILE_DIM * 25;
+    private void drawRoomLabel(Batch batch, String id, int x, int y) {
+        ClueMain.FONT_24.draw(batch, id, TILE_DIM * 8 + x, VIEWPORT_DIM_HEIGHT - y);
+    }
 
-        Pixmap pix = new Pixmap(imgWidth, imgHeight, Pixmap.Format.RGBA8888);
+    private Color getRoomTextColor(int room_id) {
 
-        pix.setColor(255f, 255f, 0f, 1f);
+        Color textColor = Color.YELLOW;
 
-        for (int x = 0; x < imgWidth; x += TILE_DIM) {
-            pix.drawLine(x, 0, x, imgHeight);
+        for (Location location : map.getLocations()) {
+            if (!location.isRoom()) {
+                continue;
+            }
+            if (location.getHighlighted() && location.getRoomId() == room_id) {
+                return Color.FOREST;
+            }
         }
-        for (int y = 0; y < imgHeight; y += TILE_DIM) {
-            pix.drawLine(0, y, imgWidth, y);
-        }
 
-        return pix;
+        return textColor;
+    }
+
+    private Location getPlayerLocation(int id) {
+        Location location = null;
+        if (players == null) {
+            return null;
+        }
+        Player player = game.getPlayer(id);
+        if (player != null) {
+            location = player.getLocation();
+        }
+        return location;
+    }
+
+    private void drawPlayerLocation(Batch batch, int id) {
+        Location location = getPlayerLocation(id);
+        if (location == null) {
+            return;
+        }
+        if (currentTurnPlayer.getSuspectNumber() == id) {
+            batch.draw(ClueMain.CIRCLES.get(Color.PINK), location.getX(), location.getY());
+        }
+        batch.draw(ClueMain.CIRCLES.get(location.getColor()), location.getX(), location.getY());
     }
 
 }

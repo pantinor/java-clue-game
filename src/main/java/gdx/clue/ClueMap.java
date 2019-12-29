@@ -15,7 +15,8 @@ public class ClueMap {
     private int hbound = 0;
     private int vbound = 0;
 
-    private static final String TEMPLATE = "xxxxxxxxxoxxxoxxxxxxxxxx\n"
+    private static final String TEMPLATE = 
+              "xxxxxxxxxoxxxoxxxxxxxxxx\n"
             + "xxxxxxxoooxxxoooxxxxxxxx\n"
             + "xxxxxxooxxxxxxxooxxxxxxx\n"
             + "xxxxxxooxxxxxxxooxxxxxxx\n"
@@ -93,15 +94,6 @@ public class ClueMap {
 
     public Location getLocation(int x, int y) {
         return nodes[x][y];
-    }
-
-    public Location getLocationAndSetColor(int x, int y, Color color) {
-        nodes[x][y].setColor(color);
-        return nodes[x][y];
-    }
-
-    public void setLocationColor(Location location, Color color) {
-        nodes[location.getX()][location.getY()].setColor(color);
     }
 
     public int getXSize() {

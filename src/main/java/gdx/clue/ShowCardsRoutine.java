@@ -40,21 +40,14 @@ public class ShowCardsRoutine {
 
         //call the suspect over to the room and set their current location
         for (Player player : players) {
-            if (player.getSuspectNumber() == suspect.getValue()) {
-
-                screen.getPlayerIconPlacement().removePlayerIcon(player.getSuspectNumber());
-
-                //reset original color back to gray
-                screen.getMap().setLocationColor(player.getLocation(), Color.GRAY);
-
+            if (player.getSuspect().id() == suspect.getValue()) {
+                screen.getPlayerIconPlacement().removePlayerIcon(player.getSuspect().id());
+                
                 Location room_location = suggesting_player.getLocation();
+                
+                screen.getPlayerIconPlacement().addPlayerIcon(room_location.getRoomId(), player.getSuspect().id());
 
-                screen.getPlayerIconPlacement().addPlayerIcon(room_location.getRoomId(), player.getSuspectNumber());
-
-                //set the players location 
                 player.setLocation(room_location);
-                //set location color to the players color
-                room_location.setColor(player.getPlayerColor());
             }
         }
 
@@ -93,8 +86,8 @@ public class ShowCardsRoutine {
                 if (!next_player.isHoldingCardInSuggestion(suggestion)) {
                     //nothing
                 } else {
-                    PickCardsToShowDialog2 dialog = new PickCardsToShowDialog2(suggestion, suggestion_text, next_player);
-                    card_to_show = (Card) dialog.showDialog();
+                    //PickCardsToShowDialog2 dialog = new PickCardsToShowDialog2(suggestion, suggestion_text, next_player);
+                    //card_to_show = (Card) dialog.showDialog();
                 }
 
             } else {
@@ -111,8 +104,8 @@ public class ShowCardsRoutine {
 
                         text = text + "\n\n" + suggestion_text;
 
-                        ShowCardDialog2 dialog = new ShowCardDialog2(text);
-                        dialog.setVisible(true);
+                        //ShowCardDialog2 dialog = new ShowCardDialog2(text);
+                        //dialog.setVisible(true);
 
                         card_to_show = card;
                         break;
@@ -130,14 +123,14 @@ public class ShowCardsRoutine {
                 index = 0;
             }
 
-            ShowCardDialog2 dialog = new ShowCardDialog2(next_player.toString() + "\ndoes not have\na card to show.");
-            dialog.setVisible(true);
+            //ShowCardDialog2 dialog = new ShowCardDialog2(next_player.toString() + "\ndoes not have\na card to show.");
+            //dialog.setVisible(true);
 
         }
 
         if (card_to_show == null) {
-            ShowCardDialog2 dialog = new ShowCardDialog2("No one has a\ncard to show.");
-            dialog.setVisible(true);
+            //ShowCardDialog2 dialog = new ShowCardDialog2("No one has a\ncard to show.");
+            //dialog.setVisible(true);
         } else {
             //set the card as toggled in their notebook
             if (suggesting_player.isComputerPlayer()) {

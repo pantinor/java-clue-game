@@ -1,49 +1,35 @@
 package gdx.clue;
 
 import com.badlogic.gdx.graphics.Color;
+import gdx.clue.ClueMain.Suspect;
 import java.util.ArrayList;
 import java.util.List;
 import gdx.clue.astar.Location;
 
 public class Player {
 
-    private int suspectNumber = 0;
-    private String suspectName = null;
-    private String playerName = "";
-    private Card playerCard = null;
-    private ArrayList<Card> cardsInHand = new ArrayList<>();
-    private boolean computerPlayer = false;
-    private Location playerLocation = null;
-    private Notebook notebook = null;
-    private Color playerColor = Color.GRAY;
+    private final Suspect suspect;
+    private String name;
+    private Card card;
+    private final List<Card> cardsInHand = new ArrayList<>();
+    private boolean computerPlayer;
+    private Location location;
+    private Notebook notebook;
     private boolean hasMadeFalseAccusation = false;
 
-    public static final Color COLOR_SCARLET = Color.RED;
-    public static final Color COLOR_GREEN = Color.GREEN;
-    public static final Color COLOR_MUSTARD = Color.YELLOW;
-    public static final Color COLOR_PLUM = Color.MAGENTA;
-    public static final Color COLOR_WHITE = Color.BLACK;
-    public static final Color COLOR_PEACOCK = Color.BLUE;
-
-    public Player() {
-
-    }
-
-    public Player(Card pick, String name, Color color, boolean computer) {
-        setPlayerName(name);
-        setPlayerCard(pick);
-        setSuspectNumber(pick.getValue());
-        setSuspectName(getPlayerCard().toString());
-        setComputerPlayer(computer);
-        setPlayerColor(color);
+    public Player(Card card, String name, Suspect suspect, boolean computer) {
+        this.name = name;
+        this.card = card;
+        this.suspect = suspect;
+        this.computerPlayer = computer;
     }
 
     public void setLocation(Location location) {
-        playerLocation = location;
+        this.location = location;
     }
 
     public Location getLocation() {
-        return playerLocation;
+        return this.location;
     }
 
     public void setNotebook(Notebook notebook) {
@@ -51,29 +37,29 @@ public class Player {
     }
 
     public Notebook getNotebook() {
-        return notebook;
+        return this.notebook;
     }
 
     public void addCard(Card card) {
-        cardsInHand.add(card);
+        this.cardsInHand.add(card);
     }
 
-    public ArrayList<Card> getCardsInHand() {
-        return cardsInHand;
+    public List<Card> getCardsInHand() {
+        return this.cardsInHand;
     }
 
     public boolean isCardInHand(Card card) {
-        return cardsInHand.contains(card);
+        return this.cardsInHand.contains(card);
     }
 
     public boolean isCardInHand(int type, int id) {
         Card card = new Card(type, id);
-        return cardsInHand.contains(card);
+        return this.cardsInHand.contains(card);
     }
 
     public boolean isHoldingCardInSuggestion(List<Card> suggestion) {
         boolean hasCards = false;
-        for (Card card : cardsInHand) {
+        for (Card card : this.cardsInHand) {
             if (suggestion.contains(card)) {
                 hasCards = true;
             }
@@ -81,54 +67,33 @@ public class Player {
         return hasCards;
     }
 
+    @Override
     public String toString() {
-        return getPlayerCard().toString();
+        return "Player{" + "suspect=" + suspect + ", card=" + card + ", computerPlayer=" + computerPlayer + ", location=" + location + '}';
     }
 
-    public String toLongString() {
-        Card roomCard = (playerLocation.getRoomId() != -1 ? new Card(Card.TYPE_ROOM, playerLocation.getRoomId()) : null);
-        String location = (playerLocation != null && playerLocation.getRoomId() != -1 ? "in the " + roomCard : "outside of a room");
-        return getPlayerCard().toString() + ", played by " + (isComputerPlayer() ? "computer" : getPlayerName()) + " is currently " + location + ".";
+    public Card getCard() {
+        return card;
     }
 
-    public String getSuspectName() {
-        return suspectName;
-    }
-
-    public void setSuspectName(String suspectName) {
-        this.suspectName = suspectName;
-    }
-
-    public Card getPlayerCard() {
-        return playerCard;
-    }
-
-    public void setPlayerCard(Card playerCard) {
-        this.playerCard = playerCard;
+    public void setCard(Card playerCard) {
+        this.card = playerCard;
     }
 
     public Color getPlayerColor() {
-        return playerColor;
-    }
-
-    public void setPlayerColor(Color playerColor) {
-        this.playerColor = playerColor;
+        return this.suspect.color();
     }
 
     public String getPlayerName() {
-        return playerName;
+        return name;
     }
 
     public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+        this.name = playerName;
     }
 
-    public int getSuspectNumber() {
-        return suspectNumber;
-    }
-
-    public void setSuspectNumber(int suspectNumber) {
-        this.suspectNumber = suspectNumber;
+    public Suspect getSuspect() {
+        return this.suspect;
     }
 
     public boolean isComputerPlayer() {

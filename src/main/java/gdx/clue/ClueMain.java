@@ -13,16 +13,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ClueMain extends Game {
 
     public static final int TILE_DIM = 32;
     public static final int SCREEN_DIM_WIDTH = TILE_DIM * 40;//8 + 24 + 8
     public static final int SCREEN_DIM_HEIGHT = TILE_DIM * 25;
-    public static final int VIEWPORT_DIM_WIDTH = TILE_DIM * 24;
-    public static final int VIEWPORT_DIM_HEIGHT = TILE_DIM * 25;
 
     public static final Dice DICE = new Dice(1, 6);
 
@@ -38,8 +34,9 @@ public class ClueMain extends Game {
     public static BitmapFont FONT_48;
 
     public static TextureRegion[][] DICE_TEXTURES;
-    public static final Map<Color, Texture> CIRCLES = new HashMap<>();
+
     public static Texture ROOMS;
+
     public static Texture TILE_BROWN;
     public static Texture TILE_LIGHT_GRAY;
     public static Texture TILE_DARK_GREEN;
@@ -70,7 +67,7 @@ public class ClueMain extends Game {
         parameter.size = 24;
         parameter.color = Color.YELLOW;
         FONT_24 = generator.generateFont(parameter);
-        
+
         parameter.size = 48;
         parameter.color = Color.FOREST;
         FONT_48 = generator.generateFont(parameter);
@@ -96,23 +93,15 @@ public class ClueMain extends Game {
         TILE_LIGHT_GRAY = createSquare(Color.LIGHT_GRAY, Color.GRAY, TILE_DIM, TILE_DIM);
         TILE_DARK_GREEN = createSquare(Color.GREEN, Color.FOREST, TILE_DIM, TILE_DIM);
 
-        CIRCLES.put(Color.RED, createCircle(Color.RED, TILE_DIM, TILE_DIM, 16));
-        CIRCLES.put(Color.GREEN, createCircle(Color.GREEN, TILE_DIM, TILE_DIM, 16));
-        CIRCLES.put(Color.BLUE, createCircle(Color.BLUE, TILE_DIM, TILE_DIM, 16));
-        CIRCLES.put(Color.BLACK, createCircle(Color.BLACK, TILE_DIM, TILE_DIM, 16));
-        CIRCLES.put(Color.MAGENTA, createCircle(Color.MAGENTA, TILE_DIM, TILE_DIM, 16));
-        CIRCLES.put(Color.YELLOW, createCircle(Color.YELLOW, TILE_DIM, TILE_DIM, 16));
-        CIRCLES.put(Color.PINK, createCircle(Color.PINK, TILE_DIM, TILE_DIM, 21));
-
         GameScreen sc = new GameScreen();
         setScreen(sc);
 
     }
-    
+
     private static Texture createCircle(Color color, int w, int h, int radius) {
         Pixmap pix = new Pixmap(w, h, Pixmap.Format.RGBA8888);
         pix.setColor(color);
-        pix.drawCircle(w, h, radius);
+        pix.fillCircle(w / 2, h / 2, radius);
         return new Texture(pix);
     }
 
@@ -125,27 +114,59 @@ public class ClueMain extends Game {
         return new Texture(pix);
     }
 
-    public static enum PlayerIcon {
+    public static enum Suspect {
 
-        SCARLET("MsScarlett1.png"),
-        WHITE("MrsWhite1.png"),
-        PLUM("ProfPlum1.png"),
-        MUSTARD("ColMustard1.png"),
-        GREEN("MrGreen1.png"),
-        PEACOCK("MrsPeacock1.png");
+        SCARLET("MsScarlett1.png", Color.RED, 0, "Miss Scarlet", 7, 24),
+        WHITE("MrsWhite1.png", Color.ORANGE, 1, "Mrs. White", 9, 0),
+        PLUM("ProfPlum1.png", Color.PURPLE, 2, "Professor Plum", 23, 18),
+        MUSTARD("ColMustard1.png", Color.GOLDENROD, 3, "Colonel Mustard", 0, 17),
+        GREEN("MrGreen1.png", Color.FOREST, 4, "Mr. Green", 13, 0),
+        PEACOCK("MrsPeacock1.png", Color.MAGENTA, 5, "Mrs. Peacock", 23, 5);
 
-        private Texture image;
+        private Texture icon;
+        private Texture circle;
+        private Color color;
+        private int id;
+        private String title;
+        private int startX;
+        private int startY;
 
-        PlayerIcon(String filename) {
-            try {
-                image = new Texture(Gdx.files.internal(filename));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        Suspect(String filename, Color c, int id, String title, int sx, int sy) {
+            this.id = id;
+            this.color = c;
+            this.circle = createCircle(c, TILE_DIM, TILE_DIM, 8);
+            this.icon = new Texture(Gdx.files.internal(filename));
+            this.title = title;
+            this.startX = sx;
+            this.startY = sy;
         }
 
-        public Texture texture() {
-            return image;
+        public Texture icon() {
+            return icon;
+        }
+
+        public Texture circle() {
+            return circle;
+        }
+
+        public int id() {
+            return this.id;
+        }
+
+        public Color color() {
+            return this.color;
+        }
+
+        public String title() {
+            return this.title;
+        }
+
+        public int startX() {
+            return this.startX;
+        }
+
+        public int startY() {
+            return this.startY;
         }
     }
 

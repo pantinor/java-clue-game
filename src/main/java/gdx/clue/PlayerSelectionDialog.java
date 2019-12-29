@@ -22,13 +22,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
-import static gdx.clue.Card.*;
-import static gdx.clue.Player.*;
+import static gdx.clue.Card.TYPE_SUSPECT;
+import gdx.clue.ClueMain.Suspect;
 
 public class PlayerSelectionDialog extends Window {
 
     public static int WIDTH = 300;
     public static int HEIGHT = 400;
+
+    public static final Card CARD_SCARLET = new Card(TYPE_SUSPECT, Suspect.SCARLET.id());
+    public static final Card CARD_MUSTARD = new Card(TYPE_SUSPECT, Suspect.MUSTARD.id());
+    public static final Card CARD_GREEN = new Card(TYPE_SUSPECT, Suspect.GREEN.id());
+    public static final Card CARD_PLUM = new Card(TYPE_SUSPECT, Suspect.PLUM.id());
+    public static final Card CARD_PEACOCK = new Card(TYPE_SUSPECT, Suspect.PEACOCK.id());
+    public static final Card CARD_WHITE = new Card(TYPE_SUSPECT, Suspect.WHITE.id());
 
     Actor previousKeyboardFocus, previousScrollFocus;
     private final FocusListener focusListener;
@@ -43,7 +50,7 @@ public class PlayerSelectionDialog extends Window {
         defaults().pad(10);
 
         Table table = new Table();
-        table.align(Align.left | Align.top);
+        table.align(Align.left | Align.top).pad(5);
         table.columnDefaults(0).expandX().left().uniformX();
         table.columnDefaults(1).expandX().left().uniformX();
 
@@ -53,12 +60,12 @@ public class PlayerSelectionDialog extends Window {
 
         table.add(new Label("Select your player", ClueMain.skin));
         table.row();
-        final CheckBox cb1 = new CheckBox("Miss Scarlet", ClueMain.skin, "selection-blue");
-        final CheckBox cb2 = new CheckBox("Mr. Green", ClueMain.skin, "selection-blue");
-        final CheckBox cb3 = new CheckBox("Mrs. White", ClueMain.skin, "selection-blue");
-        final CheckBox cb4 = new CheckBox("Professor Plum", ClueMain.skin, "selection-blue");
-        final CheckBox cb5 = new CheckBox("Mrs. Peacock", ClueMain.skin, "selection-blue");
-        final CheckBox cb6 = new CheckBox("Colonel Mustard", ClueMain.skin, "selection-blue");
+        final CheckBox cb1 = new CheckBox(Suspect.SCARLET.title(), ClueMain.skin, "selection-blue");
+        final CheckBox cb2 = new CheckBox(Suspect.GREEN.title(), ClueMain.skin, "selection-blue");
+        final CheckBox cb3 = new CheckBox(Suspect.WHITE.title(), ClueMain.skin, "selection-blue");
+        final CheckBox cb4 = new CheckBox(Suspect.PLUM.title(), ClueMain.skin, "selection-blue");
+        final CheckBox cb5 = new CheckBox(Suspect.PEACOCK.title(), ClueMain.skin, "selection-blue");
+        final CheckBox cb6 = new CheckBox(Suspect.MUSTARD.title(), ClueMain.skin, "selection-blue");
         ButtonGroup buttonGroup = new ButtonGroup(cb1, cb2, cb3, cb4, cb5, cb6);
         buttonGroup.setMaxCheckCount(1);
         buttonGroup.setMinCheckCount(0);
@@ -77,12 +84,12 @@ public class PlayerSelectionDialog extends Window {
 
         table.add(new Label("Select at least 2 opposing players", ClueMain.skin));
         table.row();
-        final CheckBox cb11 = new CheckBox("Miss Scarlet", ClueMain.skin, "selection-yellow");
-        final CheckBox cb12 = new CheckBox("Mr. Green", ClueMain.skin, "selection-yellow");
-        final CheckBox cb13 = new CheckBox("Mrs. White", ClueMain.skin, "selection-yellow");
-        final CheckBox cb14 = new CheckBox("Professor Plum", ClueMain.skin, "selection-yellow");
-        final CheckBox cb15 = new CheckBox("Mrs. Peacock", ClueMain.skin, "selection-yellow");
-        final CheckBox cb16 = new CheckBox("Colonel Mustard", ClueMain.skin, "selection-yellow");
+        final CheckBox cb11 = new CheckBox(Suspect.SCARLET.title(), ClueMain.skin, "selection-yellow");
+        final CheckBox cb12 = new CheckBox(Suspect.GREEN.title(), ClueMain.skin, "selection-yellow");
+        final CheckBox cb13 = new CheckBox(Suspect.WHITE.title(), ClueMain.skin, "selection-yellow");
+        final CheckBox cb14 = new CheckBox(Suspect.PLUM.title(), ClueMain.skin, "selection-yellow");
+        final CheckBox cb15 = new CheckBox(Suspect.PEACOCK.title(), ClueMain.skin, "selection-yellow");
+        final CheckBox cb16 = new CheckBox(Suspect.MUSTARD.title(), ClueMain.skin, "selection-yellow");
         table.add(cb11);
         table.add(cb14);
         table.row();
@@ -146,45 +153,45 @@ public class PlayerSelectionDialog extends Window {
                     }
 
                     if (cb1.isChecked()) {
-                        game.addPlayer(Card.scarlet, "Player", COLOR_SCARLET, false);
+                        game.addPlayer(CARD_SCARLET, "Player", Suspect.SCARLET, false);
                     }
                     if (cb2.isChecked()) {
-                        game.addPlayer(Card.green, "Player", COLOR_GREEN, false);
+                        game.addPlayer(CARD_GREEN, "Player", Suspect.GREEN, false);
                     }
                     if (cb3.isChecked()) {
-                        game.addPlayer(Card.white, "Player", COLOR_WHITE, false);
+                        game.addPlayer(CARD_WHITE, "Player", Suspect.WHITE, false);
                     }
                     if (cb4.isChecked()) {
-                        game.addPlayer(Card.plum, "Player", COLOR_PLUM, false);
+                        game.addPlayer(CARD_PLUM, "Player", Suspect.PLUM, false);
                     }
                     if (cb5.isChecked()) {
-                        game.addPlayer(Card.peacock, "Player", COLOR_PEACOCK, false);
+                        game.addPlayer(CARD_PEACOCK, "Player", Suspect.PEACOCK, false);
                     }
                     if (cb6.isChecked()) {
-                        game.addPlayer(Card.mustard, "Player", COLOR_MUSTARD, false);
+                        game.addPlayer(CARD_MUSTARD, "Player", Suspect.MUSTARD, false);
                     }
 
                     if (cb11.isChecked()) {
-                        game.addPlayer(Card.scarlet, "", COLOR_SCARLET, true);
+                        game.addPlayer(CARD_SCARLET, "", Suspect.SCARLET, true);
                     }
                     if (cb12.isChecked()) {
-                        game.addPlayer(Card.green, "", COLOR_GREEN, true);
+                        game.addPlayer(CARD_GREEN, "", Suspect.GREEN, true);
                     }
                     if (cb13.isChecked()) {
-                        game.addPlayer(Card.white, "", COLOR_WHITE, true);
+                        game.addPlayer(CARD_WHITE, "", Suspect.WHITE, true);
                     }
                     if (cb14.isChecked()) {
-                        game.addPlayer(Card.plum, "", COLOR_PLUM, true);
+                        game.addPlayer(CARD_PLUM, "", Suspect.PLUM, true);
                     }
                     if (cb15.isChecked()) {
-                        game.addPlayer(Card.peacock, "", COLOR_PEACOCK, true);
+                        game.addPlayer(CARD_PEACOCK, "", Suspect.PEACOCK, true);
                     }
                     if (cb16.isChecked()) {
-                        game.addPlayer(Card.mustard, "", COLOR_MUSTARD, true);
+                        game.addPlayer(CARD_MUSTARD, "", Suspect.MUSTARD, true);
                     }
 
                     screen.startGame();
-                    
+
                     startButton.setDisabled(true);
 
                     hide();
@@ -192,7 +199,7 @@ public class PlayerSelectionDialog extends Window {
                 return false;
             }
         });
-        table.add(close);
+        table.add(close).size(120, 25);
 
         focusListener = new FocusListener() {
             @Override

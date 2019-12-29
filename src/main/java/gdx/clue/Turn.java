@@ -40,7 +40,7 @@ public class Turn {
                 if (player.isComputerPlayer()) {
 
                     Location new_location = clickOnMapComputerPlayer(player);
-                    // let them make a suggestion
+                    
                     makeSuggestionComputerPlayer(player, players);
 
                     if (canMakeAccusationComputerPlayer(player)) {
@@ -62,14 +62,12 @@ public class Turn {
                     boolean isInRoom = location.getRoomId() != -1;
                     boolean showSecret = (location.getRoomId() == ROOM_LOUNGE || location.getRoomId() == ROOM_STUDY || location.getRoomId() == ROOM_CONSERVATORY || location.getRoomId() == ROOM_KITCHEN);
 
-                    TurnDialog2 dialog1 = new TurnDialog2(player, true, showSecret, isInRoom);
-                    int action = dialog1.showDialog();
+                    //TurnDialog2 dialog1 = new TurnDialog2(player, true, showSecret, isInRoom);
+                    int action = 0;//dialog1.showDialog();
 
                     if (action == ACTION_ROLLED_DICE) {
 
                         // wait here until they click on the new location
-                        //ClueMain.mapView.setEnabled(true);// let them click on
-                        // the map
                         Location new_location = null;
                         do {
                             try {
@@ -79,15 +77,12 @@ public class Turn {
                             } catch (Exception e) {
                             }
                         } while (new_location == location);
-                        //ClueMain.mapView.setEnabled(false);// disable map clicks
-                        // again
 
-                        // see if they made it to a room and let them make a
-                        // suggestion
+                        // see if they made it to a room and let them make a suggestion
                         isInRoom = new_location.getRoomId() != -1;
                         if (isInRoom) {
-                            TurnDialog2 dialog2 = new TurnDialog2(player, false, false, true);
-                            dialog2.showDialog();
+                            //TurnDialog2 dialog2 = new TurnDialog2(player, false, false, true);
+                            //dialog2.showDialog();
                         }
 
                     } else if (action == ACTION_TOOK_PASSAGE) {
@@ -108,8 +103,8 @@ public class Turn {
                                 break;
                         }
 
-                        TurnDialog2 dialog2 = new TurnDialog2(player, false, false, true);
-                        dialog2.showDialog();
+                        //TurnDialog2 dialog2 = new TurnDialog2(player, false, false, true);
+                        //dialog2.showDialog();
 
                     } else if (action == ACTION_MADE_SUGGESTION) {
                         // next player

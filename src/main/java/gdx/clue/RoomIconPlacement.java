@@ -1,31 +1,21 @@
 package gdx.clue;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import static gdx.clue.Card.*;
-import gdx.clue.ClueMain.PlayerIcon;
+import static gdx.clue.ClueMain.SCREEN_DIM_HEIGHT;
+import gdx.clue.ClueMain.Suspect;
+import static gdx.clue.ClueMain.TILE_DIM;
 
 public class RoomIconPlacement {
 
     int icon_width = 70;
     int icon_height = 80;
-
     Room[] rooms = new Room[9];
-    Texture[] icons = new Texture[NUM_SUSPECTS];
 
     public RoomIconPlacement() {
-
-        icons[SUSPECT_SCARLET] = PlayerIcon.SCARLET.texture();
-        icons[SUSPECT_MUSTARD] = PlayerIcon.MUSTARD.texture();
-        icons[SUSPECT_GREEN] = PlayerIcon.GREEN.texture();
-        icons[SUSPECT_WHITE] = PlayerIcon.WHITE.texture();
-        icons[SUSPECT_PLUM] = PlayerIcon.PLUM.texture();
-        icons[SUSPECT_PEACOCK] = PlayerIcon.PEACOCK.texture();
-
         for (int i = 0; i < NUM_ROOMS; i++) {
             rooms[i] = new Room(i);
         }
-
     }
 
     public void addPlayerIcon(int roomId, int playerId) {
@@ -56,9 +46,13 @@ public class RoomIconPlacement {
         for (int i = 0; i < NUM_ROOMS; i++) {
             for (int j = 0; j < NUM_SUSPECTS; j++) {
                 if (rooms[i].slot[j] != -1) {
-                    batch.draw(icons[rooms[i].slot[j]],
-                            rooms[i].icon_locations[j][0],//x
-                            rooms[i].icon_locations[j][1]//y
+                    
+                    int x = rooms[i].icon_locations[j][0];
+                    int y = rooms[i].icon_locations[j][1];
+                    
+                    batch.draw(Suspect.values()[rooms[i].slot[j]].icon(),
+                            TILE_DIM * 8 + x * TILE_DIM,
+                            SCREEN_DIM_HEIGHT - y * TILE_DIM
                     );
                 }
             }

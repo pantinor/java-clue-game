@@ -1,11 +1,10 @@
 package gdx.clue.astar;
 
 import com.badlogic.gdx.graphics.Color;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Location implements Node<Location>, Serializable {
+public class Location implements Node<Location> {
 
     private final int x;
     private final int y;
@@ -14,20 +13,11 @@ public class Location implements Node<Location>, Serializable {
     private boolean highlight;
     private boolean isRoom;
     private int roomId = -1;
-    private Color color = Color.GRAY;
-
     private final List<Location> neighbors;
 
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
-        neighbors = new ArrayList<>();
-    }
-
-    public Location(int x, int y, Color color) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
         neighbors = new ArrayList<>();
     }
 
@@ -84,14 +74,6 @@ public class Location implements Node<Location>, Serializable {
 
     public int getRoomId() {
         return roomId;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 
     public int getHeight() {

@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import static gdx.clue.ClueMain.SCREEN_DIM_HEIGHT;
 import static gdx.clue.ClueMain.TILE_DIM;
 
 public class MainPanel {
@@ -20,7 +21,7 @@ public class MainPanel {
 
     public MainPanel(final Stage stage, final GameScreen screen) {
         this.table = new Table(ClueMain.skin);
-        this.table.defaults().padLeft(5).align(Align.left);
+        this.table.defaults().pad(8);
 
         if (this.pane != null) {
             this.pane.remove();
@@ -32,11 +33,11 @@ public class MainPanel {
         this.accuse = new TextButton("ACCUSE", ClueMain.skin);
         this.end = new TextButton("END TURN", ClueMain.skin, "toggle");
 
-        this.table.add(this.start);
+        this.table.add(this.start).size(120, 25);
         this.table.row();
-        this.table.add(this.accuse);
+        this.table.add(this.accuse).size(120, 25);
         this.table.row();
-        this.table.add(this.end);
+        this.table.add(this.end).size(120, 25);
 
         this.start.addListener(new ChangeListener() {
             @Override
@@ -62,7 +63,7 @@ public class MainPanel {
             }
         });
 
-        this.pane.setBounds(0, 0, TILE_DIM * 8, TILE_DIM * 25);
+        this.pane.setBounds(0, SCREEN_DIM_HEIGHT - TILE_DIM * 5, TILE_DIM * 8, TILE_DIM * 5);
         stage.addActor(pane);
     }
 

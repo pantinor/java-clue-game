@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import static gdx.clue.Card.*;
-import gdx.clue.ClueMain.PlayerIcon;
+import gdx.clue.ClueMain.Suspect;
 import static gdx.clue.ClueMain.TILE_DIM;
 
 public class NotebookPanel {
@@ -32,7 +32,7 @@ public class NotebookPanel {
 
         this.pane = new ScrollPane(this.table, ClueMain.skin);
         
-        this.table.add(new Image(PlayerIcon.values()[notebook.getPlayer().getSuspectNumber()].texture()));
+        this.table.add(new Image(notebook.getPlayer().getSuspect().icon()));
         this.table.row();
         this.table.add(new Label(notebook.getPlayer().getPlayerName().toUpperCase() + "'S CLUES", ClueMain.skin));
         this.table.row();

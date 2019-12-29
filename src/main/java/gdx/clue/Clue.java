@@ -1,9 +1,9 @@
 package gdx.clue;
 
-import com.badlogic.gdx.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 import static gdx.clue.Card.*;
+import gdx.clue.ClueMain.Suspect;
 import java.util.Random;
 
 public class Clue {
@@ -54,8 +54,8 @@ public class Clue {
 
     }
 
-    public Player addPlayer(Card p, String name, Color color, boolean computer) {
-        Player player = new Player(p, name, color, computer);
+    public Player addPlayer(Card p, String name, Suspect suspect, boolean computer) {
+        Player player = new Player(p, name, suspect, computer);
         players.add(player);
         return player;
     }
@@ -75,7 +75,7 @@ public class Clue {
     public Player getPlayer(int id) {
         Player player = null;
         for (Player p : players) {
-            if (p.getSuspectNumber() == id) {
+            if (p.getSuspect().id() == id) {
                 player = p;
             }
         }
@@ -92,16 +92,7 @@ public class Clue {
         return player;
     }
 
-    public String dealShuffledDeck() throws Exception {
-
-        if (shuffled == null) {
-            throw new Exception("Shuffled Deck is null.");
-        }
-
-        if (players == null) {
-            throw new Exception("Players is null.");
-        }
-
+    public void dealShuffledDeck() {
         //deal the cards
         int player_index = 0;
         for (int i = 0; i < shuffled.size(); i++) {
@@ -110,18 +101,9 @@ public class Clue {
                 player_index = 0;
             }
             Player player = players.get(player_index);
-
             player.addCard(card);
-
             player_index++;
         }
-
-        String msg = "Cards have been dealt, and the players are:\n";
-        for (int j = 0; j < players.size(); j++) {
-            msg += players.get(j).toLongString() + "\n";
-        }
-
-        return msg;
     }
 
     public String getAdjacentPlayerName(String name) {

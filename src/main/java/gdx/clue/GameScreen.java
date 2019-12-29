@@ -10,31 +10,29 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import static gdx.clue.Card.*;
 import static gdx.clue.ClueMain.TILE_DIM;
-import static gdx.clue.ClueMain.VIEWPORT_DIM_HEIGHT;
-import static gdx.clue.Player.*;
+import static gdx.clue.ClueMain.SCREEN_DIM_HEIGHT;
+import gdx.clue.ClueMain.Suspect;
 import gdx.clue.astar.AStar;
 import gdx.clue.astar.Location;
 import gdx.clue.astar.PathFinder;
-import java.util.List;
 
 public class GameScreen implements Screen, InputProcessor {
 
     private final Stage stage;
     private final Batch batch;
     private final Viewport viewport = new ScreenViewport();
-    private InputMultiplexer input;
-    private Clue game;
-    private ClueMap map;
-    private PathFinder<Location> pathfinder;
-    private List<Player> players;
+    private final InputMultiplexer input;
+    private final Clue game;
+    private final ClueMap map;
+    private final PathFinder<Location> pathfinder;
     private Player currentTurnPlayer;
     private Player yourPlayer;
-    private Turn turn;
+    private final Turn turn;
 
     private final Vector3 screenPos = new Vector3();
     private final Vector3 gridPos = new Vector3();
@@ -129,31 +127,25 @@ public class GameScreen implements Screen, InputProcessor {
                 if (t.getBlocked()) {
                     //nothing
                 } else if (t.getHighlighted()) {
-                    batch.draw(ClueMain.TILE_DARK_GREEN, TILE_DIM * 8 + i * TILE_DIM, VIEWPORT_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
+                    batch.draw(ClueMain.TILE_DARK_GREEN, TILE_DIM * 8 + i * TILE_DIM, SCREEN_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
                 } else if (t.isRoom()) {
-                    batch.draw(ClueMain.TILE_BROWN, TILE_DIM * 8 + i * TILE_DIM, VIEWPORT_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
+                    batch.draw(ClueMain.TILE_BROWN, TILE_DIM * 8 + i * TILE_DIM, SCREEN_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
                 } else {
-                    batch.draw(ClueMain.TILE_LIGHT_GRAY, TILE_DIM * 8 + i * TILE_DIM, VIEWPORT_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
+                    batch.draw(ClueMain.TILE_LIGHT_GRAY, TILE_DIM * 8 + i * TILE_DIM, SCREEN_DIM_HEIGHT - j * TILE_DIM - TILE_DIM);
                 }
             }
         }
 
         if (rolledDiceImageLeft != null) {
-            batch.draw(rolledDiceImageLeft, TILE_DIM * 8 + 350, VIEWPORT_DIM_HEIGHT - 468);
+            batch.draw(rolledDiceImageLeft, TILE_DIM * 8 + 350, SCREEN_DIM_HEIGHT - 468);
         }
         if (rolledDiceImageRight != null) {
-            batch.draw(rolledDiceImageRight, TILE_DIM * 8 + 403, VIEWPORT_DIM_HEIGHT - 468);
+            batch.draw(rolledDiceImageRight, TILE_DIM * 8 + 403, SCREEN_DIM_HEIGHT - 468);
         }
 
-        drawPlayerLocation(batch, SUSPECT_SCARLET);
-        drawPlayerLocation(batch, SUSPECT_MUSTARD);
-        drawPlayerLocation(batch, SUSPECT_GREEN);
-        drawPlayerLocation(batch, SUSPECT_PLUM);
-        drawPlayerLocation(batch, SUSPECT_WHITE);
-        drawPlayerLocation(batch, SUSPECT_PEACOCK);
-
+        //draw suspect icons for players in rooms
         playerIconPlacement.drawIcons(batch);
-
+        
         drawRoomLabel(batch, "Kitchen", 50, 75);
         drawRoomLabel(batch, "Ballroom", 323, 128);
         drawRoomLabel(batch, "Conservatory", 610, 75);
@@ -164,8 +156,8 @@ public class GameScreen implements Screen, InputProcessor {
         drawRoomLabel(batch, "Hall", 370, 712);
         drawRoomLabel(batch, "Lounge", 100, 712);
 
-        ClueMain.FONT_48.draw(batch, "Clue", TILE_DIM * 8 + 360, VIEWPORT_DIM_HEIGHT - 423);
-        //ClueMain.FONT_14.draw(batch, String.format("%s, %s\n", gridPos.x, gridPos.y), 20, 20);
+        ClueMain.FONT_48.draw(batch, "Clue", TILE_DIM * 8 + 360, SCREEN_DIM_HEIGHT - 423);
+        ClueMain.FONT_14.draw(batch, String.format("%s, %s\n", gridPos.x, gridPos.y), 20, 20);
 
         this.messagePanel.render(batch);
 
@@ -239,46 +231,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     private void drawRoomLabel(Batch batch, String id, int x, int y) {
-        ClueMain.FONT_24.draw(batch, id, TILE_DIM * 8 + x, VIEWPORT_DIM_HEIGHT - y);
-    }
-
-    private Color getRoomTextColor(int room_id) {
-
-        Color textColor = Color.YELLOW;
-
-        for (Location location : map.getLocations()) {
-            if (!location.isRoom()) {
-                continue;
-            }
-            if (location.getHighlighted() && location.getRoomId() == room_id) {
-                return Color.FOREST;
-            }
-        }
-
-        return textColor;
-    }
-
-    private Location getPlayerLocation(int id) {
-        Location location = null;
-        if (players == null) {
-            return null;
-        }
-        Player player = game.getPlayer(id);
-        if (player != null) {
-            location = player.getLocation();
-        }
-        return location;
-    }
-
-    private void drawPlayerLocation(Batch batch, int id) {
-        Location location = getPlayerLocation(id);
-        if (location == null) {
-            return;
-        }
-        if (currentTurnPlayer.getSuspectNumber() == id) {
-            batch.draw(ClueMain.CIRCLES.get(Color.PINK), location.getX(), location.getY());
-        }
-        batch.draw(ClueMain.CIRCLES.get(location.getColor()), location.getX(), location.getY());
+        ClueMain.FONT_24.draw(batch, id, TILE_DIM * 8 + x, SCREEN_DIM_HEIGHT - y);
     }
 
     public void setCurrentPlayer(Player player) {
@@ -287,80 +240,66 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void startGame() {
 
-        try {
-            game.createDeck();
-            String msg = game.dealShuffledDeck();
-            System.out.println(msg);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        game.createDeck();
+        game.dealShuffledDeck();
 
-        players = game.getPlayers();
-
-        Location scarlet_location = map.getLocationAndSetColor(7, 24, COLOR_SCARLET);
-        Location mustard_location = map.getLocationAndSetColor(0, 17, COLOR_MUSTARD);
-        Location green_location = map.getLocationAndSetColor(13, 0, COLOR_GREEN);
-        Location plum_location = map.getLocationAndSetColor(23, 18, COLOR_PLUM);
-        Location white_location = map.getLocationAndSetColor(9, 0, COLOR_WHITE);
-        Location peacock_location = map.getLocationAndSetColor(23, 5, COLOR_PEACOCK);
-
-        // set locations for the current players
-        for (Player player : players) {
-
+        for (Player player : this.game.getPlayers()) {
+            
             Notebook book = new Notebook(player);
             player.setNotebook(book);
-
+            
             if (!player.isComputerPlayer()) {
-                setCurrentPlayer(player);
+                currentTurnPlayer = player;
                 yourPlayer = player;
                 notebookPanel.setNotebook(book, this.stage);
             }
-
-            switch (player.getSuspectNumber()) {
-                case SUSPECT_SCARLET:
-                    player.setLocation(scarlet_location);
-                    break;
-                case SUSPECT_MUSTARD:
-                    player.setLocation(mustard_location);
-                    break;
-                case SUSPECT_GREEN:
-                    player.setLocation(green_location);
-                    break;
-                case SUSPECT_PLUM:
-                    player.setLocation(plum_location);
-                    break;
-                case SUSPECT_WHITE:
-                    player.setLocation(white_location);
-                    break;
-                case SUSPECT_PEACOCK:
-                    player.setLocation(peacock_location);
-                    break;
-            }
+            
+            Suspect sus = player.getSuspect();
+            player.setLocation(map.getLocation(sus.startX(), sus.startY()));
+            
+            stage.addActor(new PlayerDotActor(player));
         }
 
-        turn.mainLoop(players);
-
+        //turn.mainLoop(players);
     }
 
     public void setPlayerLocationFromMapClick(Location location) {
-        setPlayerLocationFromMapClick(currentTurnPlayer, currentTurnPlayer.getPlayerColor(), currentTurnPlayer.getLocation(), location);
+        setPlayerLocationFromMapClick(currentTurnPlayer, location);
     }
 
-    public void setPlayerLocationFromMapClick(Player player, Color color, Location from_location, Location to_location) {
-
-        playerIconPlacement.removePlayerIcon(player.getSuspectNumber());
-        playerIconPlacement.addPlayerIcon(to_location.getRoomId(), player.getSuspectNumber());
-
-        //reset original color back to gray
-        map.setLocationColor(from_location, Color.GRAY);
-        //set the players location 
+    public void setPlayerLocationFromMapClick(Player player, Location to_location) {
+        playerIconPlacement.removePlayerIcon(player.getSuspect().id());
+        playerIconPlacement.addPlayerIcon(to_location.getRoomId(), player.getSuspect().id());
         player.setLocation(to_location);
-        //set location color to the players color
-        to_location.setColor(color);
     }
 
     public void addMessage(String text) {
         this.messagePanel.add(text, Color.WHITE);
+    }
+
+    private class PlayerDotActor extends Actor {
+
+        public Player player;
+
+        public PlayerDotActor(Player player) {
+            this.player = player;
+        }
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            Color color = getColor();
+            batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+            
+            Location location = player.getLocation();
+            int x = TILE_DIM * 8 + location.getX() * TILE_DIM;
+            int y = SCREEN_DIM_HEIGHT - TILE_DIM * location.getY() - TILE_DIM;
+            
+            this.setX(x);
+            this.setY(y);
+            
+            batch.draw(player.getSuspect().circle(), getX(), getY());
+        }
+
     }
 
 }

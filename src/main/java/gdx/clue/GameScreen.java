@@ -6,9 +6,9 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -16,28 +16,36 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import static gdx.clue.Card.*;
 import static gdx.clue.ClueMain.TILE_DIM;
 import static gdx.clue.ClueMain.VIEWPORT_DIM_HEIGHT;
+import static gdx.clue.Player.*;
 import gdx.clue.astar.AStar;
 import gdx.clue.astar.Location;
 import gdx.clue.astar.PathFinder;
-import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements Screen, InputProcessor {
 
     private final Stage stage;
     private final Batch batch;
     private final Viewport viewport = new ScreenViewport();
-    InputMultiplexer input;
+    private InputMultiplexer input;
     private Clue game;
-    public ClueMap map;
-    public PathFinder<Location> pathfinder;
-    public ArrayList<Player> players = null;
-    public Player currentTurnPlayer = null;
-    public Player yourPlayer = null;
+    private ClueMap map;
+    private PathFinder<Location> pathfinder;
+    private List<Player> players;
+    private Player currentTurnPlayer;
+    private Player yourPlayer;
+    private Turn turn;
 
     private final Vector3 screenPos = new Vector3();
     private final Vector3 gridPos = new Vector3();
 
     private final RoomIconPlacement playerIconPlacement;
+    private TextureRegion rolledDiceImageLeft = null;
+    private TextureRegion rolledDiceImageRight = null;
+    private final NotebookPanel notebookPanel = new NotebookPanel();
+    private final MainPanel mainPanel;
+    private final MessagePanel messagePanel = new MessagePanel();
+    private final ShowCardsRoutine showCards;
 
     public GameScreen() {
         game = new Clue();
@@ -47,6 +55,37 @@ public class GameScreen implements Screen, InputProcessor {
         batch = new SpriteBatch();
         input = new InputMultiplexer(this, stage);
         playerIconPlacement = new RoomIconPlacement();
+        mainPanel = new MainPanel(stage, this);
+        turn = new Turn(this);
+        showCards = new ShowCardsRoutine(this);
+    }
+
+    public Clue getGame() {
+        return this.game;
+    }
+
+    public ClueMap getMap() {
+        return this.map;
+    }
+
+    public Stage getStage() {
+        return this.stage;
+    }
+
+    public PathFinder<Location> getPathfinder() {
+        return this.pathfinder;
+    }
+
+    public ShowCardsRoutine getShowCards() {
+        return showCards;
+    }
+
+    public Player getYourPlayer() {
+        return yourPlayer;
+    }
+
+    public RoomIconPlacement getPlayerIconPlacement() {
+        return playerIconPlacement;
     }
 
     private void setGridCoordinates() {
@@ -56,10 +95,22 @@ public class GameScreen implements Screen, InputProcessor {
                 0);
     }
 
+    public int rollDice() {
+
+        int roll1 = ClueMain.DICE.roll();
+        int roll2 = ClueMain.DICE.roll();
+        Sounds.play(Sound.DICE);
+
+        rolledDiceImageLeft = ClueMain.DICE_TEXTURES[0][roll1 - 1];
+        rolledDiceImageRight = ClueMain.DICE_TEXTURES[0][roll2 - 1];
+
+        return roll1 + roll2;
+
+    }
+
     @Override
     public void show() {
         Gdx.input.setInputProcessor(input);
-
     }
 
     @Override
@@ -87,7 +138,12 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
-        ClueMain.FONT_14.draw(batch, String.format("%s, %s\n", gridPos.x, gridPos.y), 20, 20);
+        if (rolledDiceImageLeft != null) {
+            batch.draw(rolledDiceImageLeft, TILE_DIM * 8 + 350, VIEWPORT_DIM_HEIGHT - 468);
+        }
+        if (rolledDiceImageRight != null) {
+            batch.draw(rolledDiceImageRight, TILE_DIM * 8 + 403, VIEWPORT_DIM_HEIGHT - 468);
+        }
 
         drawPlayerLocation(batch, SUSPECT_SCARLET);
         drawPlayerLocation(batch, SUSPECT_MUSTARD);
@@ -107,8 +163,11 @@ public class GameScreen implements Screen, InputProcessor {
         drawRoomLabel(batch, "Study", 610, 712);
         drawRoomLabel(batch, "Hall", 370, 712);
         drawRoomLabel(batch, "Lounge", 100, 712);
-        
+
         ClueMain.FONT_48.draw(batch, "Clue", TILE_DIM * 8 + 360, VIEWPORT_DIM_HEIGHT - 423);
+        //ClueMain.FONT_14.draw(batch, String.format("%s, %s\n", gridPos.x, gridPos.y), 20, 20);
+
+        this.messagePanel.render(batch);
 
         batch.end();
 
@@ -220,6 +279,88 @@ public class GameScreen implements Screen, InputProcessor {
             batch.draw(ClueMain.CIRCLES.get(Color.PINK), location.getX(), location.getY());
         }
         batch.draw(ClueMain.CIRCLES.get(location.getColor()), location.getX(), location.getY());
+    }
+
+    public void setCurrentPlayer(Player player) {
+        currentTurnPlayer = player;
+    }
+
+    public void startGame() {
+
+        try {
+            game.createDeck();
+            String msg = game.dealShuffledDeck();
+            System.out.println(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        players = game.getPlayers();
+
+        Location scarlet_location = map.getLocationAndSetColor(7, 24, COLOR_SCARLET);
+        Location mustard_location = map.getLocationAndSetColor(0, 17, COLOR_MUSTARD);
+        Location green_location = map.getLocationAndSetColor(13, 0, COLOR_GREEN);
+        Location plum_location = map.getLocationAndSetColor(23, 18, COLOR_PLUM);
+        Location white_location = map.getLocationAndSetColor(9, 0, COLOR_WHITE);
+        Location peacock_location = map.getLocationAndSetColor(23, 5, COLOR_PEACOCK);
+
+        // set locations for the current players
+        for (Player player : players) {
+
+            Notebook book = new Notebook(player);
+            player.setNotebook(book);
+
+            if (!player.isComputerPlayer()) {
+                setCurrentPlayer(player);
+                yourPlayer = player;
+                notebookPanel.setNotebook(book, this.stage);
+            }
+
+            switch (player.getSuspectNumber()) {
+                case SUSPECT_SCARLET:
+                    player.setLocation(scarlet_location);
+                    break;
+                case SUSPECT_MUSTARD:
+                    player.setLocation(mustard_location);
+                    break;
+                case SUSPECT_GREEN:
+                    player.setLocation(green_location);
+                    break;
+                case SUSPECT_PLUM:
+                    player.setLocation(plum_location);
+                    break;
+                case SUSPECT_WHITE:
+                    player.setLocation(white_location);
+                    break;
+                case SUSPECT_PEACOCK:
+                    player.setLocation(peacock_location);
+                    break;
+            }
+        }
+
+        turn.mainLoop(players);
+
+    }
+
+    public void setPlayerLocationFromMapClick(Location location) {
+        setPlayerLocationFromMapClick(currentTurnPlayer, currentTurnPlayer.getPlayerColor(), currentTurnPlayer.getLocation(), location);
+    }
+
+    public void setPlayerLocationFromMapClick(Player player, Color color, Location from_location, Location to_location) {
+
+        playerIconPlacement.removePlayerIcon(player.getSuspectNumber());
+        playerIconPlacement.addPlayerIcon(to_location.getRoomId(), player.getSuspectNumber());
+
+        //reset original color back to gray
+        map.setLocationColor(from_location, Color.GRAY);
+        //set the players location 
+        player.setLocation(to_location);
+        //set location color to the players color
+        to_location.setColor(color);
+    }
+
+    public void addMessage(String text) {
+        this.messagePanel.add(text, Color.WHITE);
     }
 
 }

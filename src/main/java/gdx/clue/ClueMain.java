@@ -3,10 +3,8 @@ package gdx.clue;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import static gdx.clue.Card.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,7 +90,6 @@ public class ClueMain extends Game {
         ls.font = small;
 
         ROOMS = new Texture(Gdx.files.classpath("room-sheet.png"));
-
         DICE_TEXTURES = TextureRegion.split(new Texture(Gdx.files.classpath("DiceSheet.png")), 51, 51);
 
         TILE_BROWN = createSquare(Color.FIREBRICK, Color.BROWN, TILE_DIM, TILE_DIM);
@@ -112,32 +108,7 @@ public class ClueMain extends Game {
         setScreen(sc);
 
     }
-
-    public static final FileHandleResolver CLASSPTH_RSLVR = new FileHandleResolver() {
-        @Override
-        public FileHandle resolve(String fileName) {
-            return Gdx.files.classpath(fileName);
-        }
-    };
-
-    private static Texture createGrid() {
-
-        int imgWidth = TILE_DIM * 24 + 1;
-        int imgHeight = TILE_DIM * 25;
-
-        Pixmap pix = new Pixmap(imgWidth, imgHeight, Pixmap.Format.RGBA8888);
-        //pix.setColor(Color.LIGHT_GRAY);
-        //pix.fill();
-        pix.setColor(Color.GRAY);
-        for (int x = 0; x < imgWidth; x += TILE_DIM) {
-            pix.drawLine(x, 0, x, imgHeight);
-        }
-        for (int y = 0; y < imgHeight; y += TILE_DIM) {
-            pix.drawLine(0, y, imgWidth, y);
-        }
-        return new Texture(pix);
-    }
-
+    
     private static Texture createCircle(Color color, int w, int h, int radius) {
         Pixmap pix = new Pixmap(w, h, Pixmap.Format.RGBA8888);
         pix.setColor(color);
@@ -157,10 +128,10 @@ public class ClueMain extends Game {
     public static enum PlayerIcon {
 
         SCARLET("MsScarlett1.png"),
-        MUSTARD("ColMustard1.png"),
-        GREEN("MrGreen1.png"),
         WHITE("MrsWhite1.png"),
         PLUM("ProfPlum1.png"),
+        MUSTARD("ColMustard1.png"),
+        GREEN("MrGreen1.png"),
         PEACOCK("MrsPeacock1.png");
 
         private Texture image;

@@ -51,8 +51,8 @@ public class RoomIconPlacement {
                     int y = rooms[i].icon_locations[j][1];
                     
                     batch.draw(Suspect.values()[rooms[i].slot[j]].icon(),
-                            TILE_DIM * 8 + x * TILE_DIM,
-                            SCREEN_DIM_HEIGHT - y * TILE_DIM
+                            TILE_DIM * 8 + x,
+                            SCREEN_DIM_HEIGHT - y
                     );
                 }
             }
@@ -67,7 +67,9 @@ public class RoomIconPlacement {
         int start_x = 5;
         int start_y = 5;
 
+        //x,y coords for icons so that they dont all stack on top of each other when drawn
         int[][] icon_locations;
+        //6 slots for 6 player icons in a single room
         int[] slot = {-1, -1, -1, -1, -1, -1};
 
         Room(int id) {
@@ -75,27 +77,27 @@ public class RoomIconPlacement {
 
             if (id == ROOM_KITCHEN) {
                 start_x = 5;
-                start_y = 5;
+                start_y = 100;
             }
             if (id == ROOM_BALLROOM) {
                 start_x = 261;
-                start_y = 69;
+                start_y = 110;
             }
             if (id == ROOM_CONSERVATORY) {
-                start_x = 548;
-                start_y = 5;
+                start_x = 550;
+                start_y = 100;
             }
             if (id == ROOM_BILLIARD) {
-                start_x = 581;
+                start_x = 570;
                 start_y = 293;
             }
             if (id == ROOM_LIBRARY) {
-                start_x = 579;
-                start_y = 452;
+                start_x = 560;
+                start_y = 475;
             }
             if (id == ROOM_STUDY) {
-                start_x = 550;
-                start_y = 675;
+                start_x = 560;
+                start_y = 685;
             }
             if (id == ROOM_HALL) {
                 start_x = 291;
@@ -103,11 +105,11 @@ public class RoomIconPlacement {
             }
             if (id == ROOM_LOUNGE) {
                 start_x = 5;
-                start_y = 619;
+                start_y = 660;
             }
             if (id == ROOM_DINING) {
                 start_x = 5;
-                start_y = 327;
+                start_y = 360;
             }
 
             int[][] temp = {{start_x, start_y},

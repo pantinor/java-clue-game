@@ -8,10 +8,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class ClueMain extends Game {
@@ -28,14 +27,11 @@ public class ClueMain extends Game {
     public static final String accusationFormatter = "%s makes\nan accusation that\n%s\ncommitted the crime\nwith the %s\nin the %s.";
 
     public static Skin skin;
-    public static BitmapFont FONT_14;
-    public static BitmapFont FONT_18;
-    public static BitmapFont FONT_24;
-    public static BitmapFont FONT_48;
 
     public static TextureRegion[][] DICE_TEXTURES;
 
     public static Texture ROOMS;
+    public static Actor END_BUTTON_CLICK_INDICATOR;
 
     public static Texture TILE_BROWN;
     public static Texture TILE_LIGHT_GRAY;
@@ -55,39 +51,10 @@ public class ClueMain extends Game {
     @Override
     public void create() {
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.classpath("assets/fonts/gnuolane.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.size = 14;
-        FONT_14 = generator.generateFont(parameter);
-
-        parameter.size = 18;
-        FONT_18 = generator.generateFont(parameter);
-
-        parameter.size = 24;
-        parameter.color = Color.YELLOW;
-        FONT_24 = generator.generateFont(parameter);
-
-        parameter.size = 48;
-        parameter.color = Color.FOREST;
-        FONT_48 = generator.generateFont(parameter);
-
-        parameter.size = 14;
-        parameter.color = Color.BLACK;
-        BitmapFont small = generator.generateFont(parameter);
-
-        generator.dispose();
-
         skin = new Skin(Gdx.files.classpath("assets/skin/uiskin.json"));
-        skin.remove("default-font", BitmapFont.class);
-        skin.add("default-font", FONT_14, BitmapFont.class);
-        skin.add("small-font", small, BitmapFont.class);
-        Label.LabelStyle ls = new Label.LabelStyle();
-        skin.add("small-font", ls, Label.LabelStyle.class);
-        ls.font = small;
 
         ROOMS = new Texture(Gdx.files.classpath("room-sheet.png"));
-        DICE_TEXTURES = TextureRegion.split(new Texture(Gdx.files.classpath("DiceSheet.png")), 51, 51);
+        DICE_TEXTURES = TextureRegion.split(new Texture(Gdx.files.classpath("DiceSheet.png")), 56, 56);
 
         TILE_BROWN = createSquare(Color.FIREBRICK, Color.BROWN, TILE_DIM, TILE_DIM);
         TILE_LIGHT_GRAY = createSquare(Color.LIGHT_GRAY, Color.GRAY, TILE_DIM, TILE_DIM);
@@ -105,7 +72,7 @@ public class ClueMain extends Game {
         return new Texture(pix);
     }
 
-    private static Texture createSquare(Color color, Color border, int w, int h) {
+    public static Texture createSquare(Color color, Color border, int w, int h) {
         Pixmap pix = new Pixmap(w, h, Pixmap.Format.RGBA8888);
         pix.setColor(border);
         pix.fill();
@@ -134,7 +101,7 @@ public class ClueMain extends Game {
         Suspect(String filename, Color c, int id, String title, int sx, int sy) {
             this.id = id;
             this.color = c;
-            this.circle = createCircle(c, TILE_DIM, TILE_DIM, 8);
+            this.circle = createCircle(c, TILE_DIM, TILE_DIM, 10);
             this.icon = new Texture(Gdx.files.internal(filename));
             this.title = title;
             this.startX = sx;

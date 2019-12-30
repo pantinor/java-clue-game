@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -190,11 +191,11 @@ public class PlayerSelectionDialog extends Window {
                         game.addPlayer(CARD_MUSTARD, "", Suspect.MUSTARD, true);
                     }
 
-                    screen.startGame();
-
+                    hide();
                     startButton.setDisabled(true);
 
-                    hide();
+                    screen.startGame();
+
                 }
                 return false;
             }

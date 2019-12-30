@@ -1,6 +1,5 @@
 package gdx.clue;
 
-import com.badlogic.gdx.graphics.Color;
 import gdx.clue.astar.Location;
 import gdx.clue.astar.PathFinder;
 import java.util.ArrayList;
@@ -93,6 +92,12 @@ public class ClueMap {
     }
 
     public Location getLocation(int x, int y) {
+        if (x < 0 || x >= nodes.length) {
+            return null;
+        }
+        if (y < 0 || x >= nodes[0].length) {
+            return null;
+        }
         return nodes[x][y];
     }
 
@@ -105,7 +110,7 @@ public class ClueMap {
     }
 
     public Collection<Location> getLocations() {
-        Collection<Location> locations = new ArrayList<>();
+        List<Location> locations = new ArrayList<>();
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
                 locations.add(nodes[i][j]);
@@ -116,7 +121,6 @@ public class ClueMap {
 
     public Location getRoomLocation(int room_id) {
         Location room = null;
-        Collection<Location> locations = new ArrayList<>();
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
                 if (nodes[i][j].getRoomId() == room_id) {
@@ -128,7 +132,7 @@ public class ClueMap {
         return room;
     }
 
-    public ArrayList<Location> getAllRoomLocations(int exclusion) {
+    public List<Location> getAllRoomLocations(int exclusion) {
         ArrayList<Location> rooms = new ArrayList<>(9);
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
@@ -143,7 +147,7 @@ public class ClueMap {
         return rooms;
     }
 
-    public ArrayList<Location> getAllDoorLocationsForRoom(int roomId) {
+    public List<Location> getAllDoorLocationsForRoom(int roomId) {
         if (roomId == -1) {
             return null;
         }
@@ -158,13 +162,13 @@ public class ClueMap {
         return doors;
     }
 
-    public ArrayList<Location> highlightReachablePaths(Location starting_location, PathFinder<Location> pathfinder, int dice_roll) {
+    public List<Location> highlightReachablePaths(Location starting_location, PathFinder<Location> pathfinder, int dice_roll) {
 
         Collection<Location> locs = getLocations();
 
-        ArrayList<Location> choices = new ArrayList<>();
+        List<Location> choices = new ArrayList<>();
 
-        ArrayList<Location> doors = getAllDoorLocationsForRoom(starting_location.getRoomId());
+        List<Location> doors = getAllDoorLocationsForRoom(starting_location.getRoomId());
 
         if (doors == null) {
             for (Location loc : locs) {

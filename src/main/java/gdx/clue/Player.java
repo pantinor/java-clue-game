@@ -1,6 +1,7 @@
 package gdx.clue;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import gdx.clue.ClueMain.Suspect;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Player {
     private boolean computerPlayer;
     private Location location;
     private Notebook notebook;
+    private Actor stageActor;
     private boolean hasMadeFalseAccusation = false;
 
     public Player(Card card, String name, Suspect suspect, boolean computer) {
@@ -65,6 +67,14 @@ public class Player {
             }
         }
         return hasCards;
+    }
+
+    public Actor getStageActor() {
+        return stageActor;
+    }
+
+    public void setStageActor(Actor stageActor) {
+        this.stageActor = stageActor;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package gdx.clue;
 
-import com.badlogic.gdx.graphics.Color;
 import static gdx.clue.Card.*;
 import java.util.List;
 import gdx.clue.astar.Location;
@@ -20,6 +19,7 @@ public class ShowCardsRoutine {
     }
 
     public void setSuggestion(List<Card> suggestion, Player suggesting_player, Player your_player, List<Player> players) {
+        
         this.suggestion = suggestion;
         this.players = players;
         this.suggesting_player = suggesting_player;
@@ -52,8 +52,6 @@ public class ShowCardsRoutine {
         }
 
         suggestion_text = String.format(ClueMain.formatter, suggesting_player.toString(), suspect.toString(), weapon.toString(), room.toString());
-
-
     }
 
     public void showCards() {

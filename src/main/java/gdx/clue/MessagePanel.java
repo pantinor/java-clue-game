@@ -3,6 +3,7 @@ package gdx.clue;
 import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 import static gdx.clue.ClueMain.TILE_DIM;
@@ -13,10 +14,11 @@ public class MessagePanel {
 
     static final int LOG_AREA_WIDTH = TILE_DIM * 7;
     static final int LOG_AREA_TOP = 375;
-    static final int LOG_X = 20;
+    static final int LOG_X = 16;
 
+    private final BitmapFont font = ClueMain.skin.get(BitmapFont.class);
     private final List<LogEntry> logs = new FixedSizeArrayList<>(25);
-    private final GlyphLayout layout = new GlyphLayout(ClueMain.FONT_14, "");
+    private final GlyphLayout layout = new GlyphLayout(font, "");
 
     public void add(String s, Color color) {
         synchronized (logs) {
@@ -32,12 +34,12 @@ public class MessagePanel {
             ReverseListIterator iter = new ReverseListIterator(logs);
             while (iter.hasNext()) {
                 LogEntry next = (LogEntry) iter.next();
-                layout.setText(ClueMain.FONT_14, next.text, next.color, LOG_AREA_WIDTH, Align.left, true);
+                layout.setText(font, next.text, next.color, LOG_AREA_WIDTH, Align.left, true);
                 y += layout.height + 12;
                 if (y > LOG_AREA_TOP) {
                     break;
                 }
-                ClueMain.FONT_14.draw(batch, layout, LOG_X, y);
+                font.draw(batch, layout, LOG_X, y);
             }
         }
     }

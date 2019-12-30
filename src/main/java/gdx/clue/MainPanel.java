@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Align;
 import static gdx.clue.ClueMain.SCREEN_DIM_HEIGHT;
 import static gdx.clue.ClueMain.TILE_DIM;
 
@@ -31,7 +30,7 @@ public class MainPanel {
 
         this.start = new TextButton("START", ClueMain.skin);
         this.accuse = new TextButton("ACCUSE", ClueMain.skin);
-        this.end = new TextButton("END TURN", ClueMain.skin, "toggle");
+        this.end = new TextButton("END TURN", ClueMain.skin);
 
         this.table.add(this.start).size(120, 25);
         this.table.row();
@@ -50,8 +49,9 @@ public class MainPanel {
         this.end.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-
                 Sounds.play(Sound.BUTTON);
+                ClueMain.END_BUTTON_CLICK_INDICATOR.remove();
+                screen.turn(screen.nextPlayer());
             }
         });
 

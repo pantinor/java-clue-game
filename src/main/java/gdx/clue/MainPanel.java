@@ -14,13 +14,9 @@ public class MainPanel {
     private Table table;
     private ScrollPane pane;
 
-    private TextButton start;
-    private TextButton end;
-    private TextButton accuse;
-
     public MainPanel(final Stage stage, final GameScreen screen) {
         this.table = new Table(ClueMain.skin);
-        this.table.defaults().pad(8);
+        this.table.defaults().pad(5);
 
         if (this.pane != null) {
             this.pane.remove();
@@ -28,38 +24,54 @@ public class MainPanel {
 
         this.pane = new ScrollPane(this.table, ClueMain.skin);
 
-        this.start = new TextButton("START", ClueMain.skin);
-        this.accuse = new TextButton("ACCUSE", ClueMain.skin);
-        this.end = new TextButton("END TURN", ClueMain.skin);
+        ClueMain.START_BUTTON = new TextButton("START", ClueMain.skin);
+        ClueMain.ACCUSE_BUTTON = new TextButton("ACCUSE", ClueMain.skin);
+        ClueMain.END_BUTTON = new TextButton("END TURN", ClueMain.skin, "end-turn");
+        TextButton debug = new TextButton("debug", ClueMain.skin);
 
-        this.table.add(this.start).size(120, 25);
+        this.table.add(ClueMain.START_BUTTON).size(120, 25);
         this.table.row();
-        this.table.add(this.accuse).size(120, 25);
+        this.table.add(ClueMain.ACCUSE_BUTTON).size(120, 25);
         this.table.row();
-        this.table.add(this.end).size(120, 25);
+        this.table.add(ClueMain.END_BUTTON).size(120, 25);
 
-        this.start.addListener(new ChangeListener() {
+        this.table.row();
+        this.table.add(debug).size(120, 25);
+
+        ClueMain.END_BUTTON.setVisible(false);
+        ClueMain.ACCUSE_BUTTON.setVisible(false);
+
+        ClueMain.START_BUTTON.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 Sounds.play(Sound.BUTTON);
-                new PlayerSelectionDialog(screen.getGame(), screen, start).show(stage);
+                ClueMain.ACCUSE_BUTTON.setVisible(true);
+                new PlayerSelectionDialog(screen.getGame(), screen).show(stage);
             }
         });
 
-        this.end.addListener(new ChangeListener() {
+        ClueMain.END_BUTTON.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 Sounds.play(Sound.BUTTON);
-                ClueMain.END_BUTTON_CLICK_INDICATOR.remove();
+                ClueMain.END_BUTTON.setVisible(false);
                 screen.turn(screen.nextPlayer());
             }
         });
 
-        this.accuse.addListener(new ChangeListener() {
+        ClueMain.ACCUSE_BUTTON.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-
                 Sounds.play(Sound.BUTTON);
+                new AccusationDialog(screen, screen.getYourPlayer()).show(stage);
+            }
+        });
+
+        debug.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                Sounds.play(Sound.BUTTON);
+                System.out.println(screen.getGame().toString());
             }
         });
 

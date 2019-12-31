@@ -8,8 +8,8 @@ import static gdx.clue.ClueMain.TILE_DIM;
 
 public class RoomIconPlacement {
 
-    int icon_width = 70;
-    int icon_height = 80;
+    int icon_width = 54;
+    int icon_height = 62;
     Room[] rooms = new Room[9];
 
     public RoomIconPlacement() {
@@ -85,19 +85,19 @@ public class RoomIconPlacement {
             }
             if (id == ROOM_CONSERVATORY) {
                 start_x = 550;
-                start_y = 100;
+                start_y = 60;
             }
             if (id == ROOM_BILLIARD) {
-                start_x = 570;
+                start_x = 600;
                 start_y = 293;
             }
             if (id == ROOM_LIBRARY) {
-                start_x = 560;
-                start_y = 475;
+                start_x = 590;
+                start_y = 510;
             }
             if (id == ROOM_STUDY) {
-                start_x = 560;
-                start_y = 685;
+                start_x = 580;
+                start_y = 700;
             }
             if (id == ROOM_HALL) {
                 start_x = 291;

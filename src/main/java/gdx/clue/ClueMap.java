@@ -132,13 +132,10 @@ public class ClueMap {
         return room;
     }
 
-    public List<Location> getAllRoomLocations(int exclusion) {
-        ArrayList<Location> rooms = new ArrayList<>(9);
+    public List<Location> getAllRoomLocations() {
+        ArrayList<Location> rooms = new ArrayList<>();
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
-                if (nodes[i][j].getRoomId() == exclusion) {
-                    continue;
-                }
                 if (nodes[i][j].getRoomId() != -1) {
                     rooms.add(nodes[i][j]);
                 }

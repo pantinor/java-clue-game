@@ -29,13 +29,14 @@ public class NotebookPanel {
         }
 
         this.pane = new ScrollPane(this.table, ClueMain.skin);
-        
+
         this.table.add(new Label("Your Detective Notebook", ClueMain.skin));
         this.table.row();
         this.table.add(new Label("(blue = your cards in hand)", ClueMain.skin, "default-blue"));
         this.table.row();
-        this.table.add(new Label("When shown a card in game,", ClueMain.skin));
-        this.table.add(new Label("mark it off below.", ClueMain.skin));
+        this.table.add(new Label("when shown a card,", ClueMain.skin, "default-red"));
+        this.table.row();
+        this.table.add(new Label("mark it off below!", ClueMain.skin, "default-red"));
 
         this.table.row();
         this.table.add(new Label("", ClueMain.skin));
@@ -70,10 +71,6 @@ public class NotebookPanel {
         pane.setBounds(TILE_DIM * 8 + TILE_DIM * 24 + 2, 0, TILE_DIM * 8, TILE_DIM * 25);
         stage.addActor(pane);
 
-    }
-
-    public void setBystanderIndicator(boolean flag) {
-        //setCellData(cellArray[1][cell_count_yaxis - 1], null, flag ? "Bystanding" : "", false, Color.red);
     }
 
     private class Entry extends Group {

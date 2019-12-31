@@ -126,7 +126,7 @@ public class Clue {
         return shuffled;
     }
 
-    public boolean matchesVictimSet(ArrayList<Card> accusation) {
+    public boolean matchesVictimSet(List<Card> accusation) {
         Card weapon = null, suspect = null, room = null;
         for (Card card : accusation) {
             if (card.getType() == TYPE_WEAPON) {
@@ -151,6 +151,20 @@ public class Clue {
         Card weapon = new Card(TYPE_WEAPON, w);
         Card room = new Card(TYPE_ROOM, r);
         return (victimSet.contains(weapon) && victimSet.contains(suspect) && victimSet.contains(room));
+    }
+
+    public String toString() {
+        String text = "";
+
+        for (Card c : victimSet) {
+            text += c.toString() + "\n";
+        }
+
+        for (Player p : players) {
+            text += "----------\n";
+            text += p.toString();
+        }
+        return text;
     }
 
 }

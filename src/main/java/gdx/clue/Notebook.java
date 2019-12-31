@@ -73,72 +73,11 @@ public class Notebook {
     }
 
     public String toString() {
-        String text = getPlayer().toString() + "'s Notebook :";
+        String text = "";
         for (Entry entry : entries.values()) {
             text += entry.toString();
         }
         return text;
-    }
-
-    public ArrayList<Card> canMakeAccusation() {
-        ArrayList<Card> accusation = new ArrayList<>();
-
-        int count = 0;
-        for (int i = 0; i < NUM_SUSPECTS; i++) {
-            Card card = new Card(TYPE_SUSPECT, i);
-            if (!isCardInHand(card) && !isCardToggled(card)) {
-                count++;
-            }
-        }
-
-        if (count == 1) {
-            for (int i = 0; i < NUM_SUSPECTS; i++) {
-                Card card = new Card(TYPE_SUSPECT, i);
-                if (!isCardInHand(card) && !isCardToggled(card)) {
-                    accusation.add(card);
-                }
-            }
-        }
-
-        count = 0;
-        for (int i = 0; i < NUM_WEAPONS; i++) {
-            Card card = new Card(TYPE_WEAPON, i);
-            if (!isCardInHand(card) && !isCardToggled(card)) {
-                count++;
-            }
-        }
-
-        if (count == 1) {
-            for (int i = 0; i < NUM_WEAPONS; i++) {
-                Card card = new Card(TYPE_WEAPON, i);
-                if (!isCardInHand(card) && !isCardToggled(card)) {
-                    accusation.add(card);
-                }
-            }
-        }
-
-        count = 0;
-        for (int i = 0; i < NUM_ROOMS; i++) {
-            Card card = new Card(TYPE_ROOM, i);
-            if (!isCardInHand(card) && !isCardToggled(card)) {
-                count++;
-            }
-        }
-
-        if (count == 1) {
-            for (int i = 0; i < NUM_ROOMS; i++) {
-                Card card = new Card(TYPE_ROOM, i);
-                if (!isCardInHand(card) && !isCardToggled(card)) {
-                    accusation.add(card);
-                }
-            }
-        }
-
-        if (accusation.size() != 3) {
-            accusation = null;
-        }
-
-        return accusation;
     }
 
     public Card randomlyPickCardOfType(int type) {
@@ -219,7 +158,7 @@ public class Notebook {
         }
 
         public String toString() {
-            return "[" + value.toString() + " inHand:" + inHand + " toggled:" + toggled + "] ";
+            return value + "\t" + (inHand ? "X" : "-") + "\t" + (toggled ? "X" : "-") + "\n";
         }
 
     }

@@ -22,10 +22,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
+import static gdx.clue.Card.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PickCardToShowDialog extends Window {
+public class AccusationDialog extends Window {
 
     public static int WIDTH = 300;
     public static int HEIGHT = 400;
@@ -35,12 +36,10 @@ public class PickCardToShowDialog extends Window {
     private final GameScreen screen;
 
     private final List<CardCheckBox> checkBoxes = new ArrayList<>();
+    private final List<Card> suggestion = new ArrayList<>();
 
-    public PickCardToShowDialog(
-            final GameScreen screen, final ShowCardsRoutine showCards, Player showingPlayer, 
-            final Player suggestingPlayer, List<Card> suggestion, String suggestionText) {
-        
-        super("Pick which card you will show for the suggestion", ClueMain.skin.get("dialog", Window.WindowStyle.class));
+    public AccusationDialog(final GameScreen screen, final Player player) {
+        super("Make your accusation ", ClueMain.skin.get("dialog", Window.WindowStyle.class));
         this.screen = screen;
 
         setSkin(ClueMain.skin);
@@ -57,28 +56,63 @@ public class PickCardToShowDialog extends Window {
         add(sp).expand().fill().minWidth(200);
         row();
 
-        table.row();
-        table.add(new Label(suggestionText, ClueMain.skin));
-        table.row();
-
         ButtonGroup buttonGroup1 = new ButtonGroup();
         buttonGroup1.setMaxCheckCount(1);
         buttonGroup1.setMinCheckCount(0);
 
-        List<Card> cards_in_hand = showingPlayer.getCardsInHand();
-        List<Card> cards_in_hand_matching_one_of_three_suggested_cards = new ArrayList<>();
+        ButtonGroup buttonGroup2 = new ButtonGroup();
+        buttonGroup2.setMaxCheckCount(1);
+        buttonGroup2.setMinCheckCount(0);
+        
+        ButtonGroup buttonGroup3 = new ButtonGroup();
+        buttonGroup2.setMaxCheckCount(1);
+        buttonGroup2.setMinCheckCount(0);
 
-        for (Card card : suggestion) {
-            if (cards_in_hand.contains(card)) {
-                cards_in_hand_matching_one_of_three_suggested_cards.add(card);
-            }
-        }
-
-        for (Card card : cards_in_hand_matching_one_of_three_suggested_cards) {
-            CardCheckBox cb = new CardCheckBox(card, false, false);
+        table.add(new Label("Pick the Suspect", ClueMain.skin, "default-yellow"));
+        table.row();
+        for (int i = 0; i < NUM_SUSPECTS; i++) {
+            Card card = new Card(TYPE_SUSPECT, i);
+            CardCheckBox cb = new CardCheckBox(card, player.isCardInHand(card), player.getNotebook().isCardToggled(card));
             checkBoxes.add(cb);
             buttonGroup1.add(cb);
             table.add(cb);
+            if ((i + 1) % 3 == 0) {
+                table.row();
+            }
+        }
+
+        table.row();
+        table.add(new Label("", ClueMain.skin));
+        table.row();
+
+        table.add(new Label("Pick the Weapon", ClueMain.skin, "default-yellow"));
+        table.row();
+        for (int i = 0; i < NUM_WEAPONS; i++) {
+            Card card = new Card(TYPE_WEAPON, i);
+            CardCheckBox cb = new CardCheckBox(card, player.isCardInHand(card), player.getNotebook().isCardToggled(card));
+            checkBoxes.add(cb);
+            buttonGroup2.add(cb);
+            table.add(cb);
+            if ((i + 1) % 3 == 0) {
+                table.row();
+            }
+        }
+
+        table.row();
+        table.add(new Label("", ClueMain.skin));
+        table.row();
+        
+        table.add(new Label("Pick the Location", ClueMain.skin, "default-yellow"));
+        table.row();
+        for (int i = 0; i < NUM_ROOMS; i++) {
+            Card card = new Card(TYPE_ROOM, i);
+            CardCheckBox cb = new CardCheckBox(card, player.isCardInHand(card), player.getNotebook().isCardToggled(card));
+            checkBoxes.add(cb);
+            buttonGroup3.add(cb);
+            table.add(cb);
+            if ((i + 1) % 3 == 0) {
+                table.row();
+            }
         }
 
         table.row();
@@ -90,15 +124,17 @@ public class PickCardToShowDialog extends Window {
             @Override
             public boolean handle(Event event) {
                 if (event.toString().equals("touchDown")) {
+
+                    hide();
+
                     for (CardCheckBox cb : checkBoxes) {
-                        if (cb.isChecked()) {
-                            hide();
-                            suggestingPlayer.getNotebook().setToggled(cb.getCard());
-                            Sounds.play(Sound.POSITIVE_EFFECT);
-                            ClueMain.END_BUTTON.setVisible(true);
-                            showCards.reset();
+                        if (cb.isChecked() && !cb.isDisabled()) {
+                            suggestion.add(cb.getCard());
                         }
                     }
+
+                    screen.makeAccusation(screen.getYourPlayer(), suggestion);
+
                 }
                 return false;
             }
@@ -122,9 +158,9 @@ public class PickCardToShowDialog extends Window {
 
             private void focusChanged(FocusListener.FocusEvent event) {
                 Stage stage = getStage();
-                if (isModal() && stage != null && stage.getRoot().getChildren().size > 0 && stage.getRoot().getChildren().peek() == PickCardToShowDialog.this) {
+                if (isModal() && stage != null && stage.getRoot().getChildren().size > 0 && stage.getRoot().getChildren().peek() == AccusationDialog.this) {
                     Actor newFocusedActor = event.getRelatedActor();
-                    if (newFocusedActor != null && !newFocusedActor.isDescendantOf(PickCardToShowDialog.this) && !(newFocusedActor.equals(previousKeyboardFocus) || newFocusedActor.equals(previousScrollFocus))) {
+                    if (newFocusedActor != null && !newFocusedActor.isDescendantOf(AccusationDialog.this) && !(newFocusedActor.equals(previousKeyboardFocus) || newFocusedActor.equals(previousScrollFocus))) {
                         event.cancel();
                     }
                 }

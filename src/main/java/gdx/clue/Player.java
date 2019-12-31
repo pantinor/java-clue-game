@@ -6,6 +6,7 @@ import gdx.clue.ClueMain.Suspect;
 import java.util.ArrayList;
 import java.util.List;
 import gdx.clue.astar.Location;
+import java.util.Objects;
 
 public class Player {
 
@@ -26,19 +27,44 @@ public class Player {
         this.computerPlayer = computer;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.suspect);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Player other = (Player) obj;
+        if (this.suspect != other.suspect) {
+            return false;
+        }
+        return true;
+    }
+
     public void setLocation(Location location) {
-        
+
         if (location == null) {
             return;
         }
-        
+
         //reset the height back to 100
         if (this.location != null) {
             this.location.setHeight(100);
         }
-        
+
         this.location = location;
-        
+
         //allow multiple players on a room tile but block regular tiles with one player
         if (!this.location.isRoom()) {
             this.location.setHeight(1000);
@@ -94,7 +120,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" + "suspect=" + suspect + ", card=" + card + ", computerPlayer=" + computerPlayer + ", location=" + location + '}';
+        return suspect + "\n" + this.notebook.toString();
     }
 
     public Card getCard() {

@@ -42,7 +42,7 @@ public class PlayerSelectionDialog extends Window {
     private final FocusListener focusListener;
     private final GameScreen screen;
 
-    public PlayerSelectionDialog(Clue game, GameScreen screen, final TextButton startButton) {
+    public PlayerSelectionDialog(Clue game, GameScreen screen) {
         super("Player Selection", ClueMain.skin.get("dialog", Window.WindowStyle.class));
         this.screen = screen;
 
@@ -192,7 +192,8 @@ public class PlayerSelectionDialog extends Window {
                     }
 
                     hide();
-                    startButton.setDisabled(true);
+                    
+                    ClueMain.START_BUTTON.setDisabled(true);
 
                     screen.startGame();
 

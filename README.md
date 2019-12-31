@@ -1,4 +1,6 @@
 First game that I wrote a few years ago.  
+Recently ported the old code base to LIBGDX and fixed alot of bugs in the processing.
+Also removed the older smartfox multiplayer mode.
 
 ![screenshot of the example](https://raw.github.com/pantinor/java-clue-game/master/preview.png)
 

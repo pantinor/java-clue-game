@@ -1,29 +1,30 @@
 package gdx.clue;
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import static gdx.clue.Card.*;
 import java.util.List;
 import gdx.clue.astar.Location;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ShowCardsRoutine {
 
     List<Card> suggestion;
-    List<Player> players;
-    Player suggesting_player;
-    Player your_player;
     String suggestion_text;
-    
+    Player suggesting_player;
+    int index = -1;
+
     GameScreen screen;
-    
+
     public ShowCardsRoutine(GameScreen screen) {
         this.screen = screen;
     }
 
-    public void setSuggestion(List<Card> suggestion, Player suggesting_player, Player your_player, List<Player> players) {
-        
+    public void setSuggestion(List<Card> suggestion, Player suggesting_player) {
+
         this.suggestion = suggestion;
-        this.players = players;
         this.suggesting_player = suggesting_player;
-        this.your_player = your_player;
 
         Card room = null, suspect = null, weapon = null;
         for (Card card : suggestion) {
@@ -39,103 +40,111 @@ public class ShowCardsRoutine {
         }
 
         //call the suspect over to the room and set their current location
-        for (Player player : players) {
+        for (Player player : screen.getGame().getPlayers()) {
             if (player.getSuspect().id() == suspect.getValue()) {
                 screen.getPlayerIconPlacement().removePlayerIcon(player.getSuspect().id());
-                
                 Location room_location = suggesting_player.getLocation();
-                
                 screen.getPlayerIconPlacement().addPlayerIcon(room_location.getRoomId(), player.getSuspect().id());
-
                 player.setLocation(room_location);
+                screen.addMessage(player.getSuspect().title() + " has been called over to the " + room + " by " + suggesting_player.getSuspect().title(), player.getSuspect().color());
             }
         }
 
-        suggestion_text = String.format(ClueMain.formatter, suggesting_player.toString(), suspect.toString(), weapon.toString(), room.toString());
+        suggestion_text = String.format(ClueMain.formatter, suggesting_player.getSuspect().title(), suspect, weapon, room);
     }
 
+    /**
+     * Proving and Disproving Suggestions: Once you make a suggestion, your
+     * opponents attempt to prove the suggestion false, beginning with the
+     * player to your right. That player looks at their cards for one of the
+     * three cards that you just named, and if they have at least one of them,
+     * they must show you (and only you) the matching card of their choice. If
+     * the player on your left is unable to disprove your suggestion, the next
+     * player must attempt to do so. Once a player shows you a card that matches
+     * one in your suggestion, cross that card off of your detective notepad.
+     */
     public void showCards() {
 
-        if (players == null) {
-            return;
-        }
-        if (suggesting_player == null) {
-            return;
+        if (this.index == -1) {
+            //get the next player to the right and ask to show a card
+            int suggestingPlayerIndex = screen.getGame().getPlayers().indexOf(suggesting_player);
+            this.index = suggestingPlayerIndex + 1;
+            if (this.index == screen.getGame().getPlayers().size()) {
+                this.index = 0;
+            }
         }
 
-        int suggestingPlayerIndex = players.indexOf(suggesting_player);
         Card card_to_show = null;
 
-        //get the next player to the right and ask to show a card
-        int index = suggestingPlayerIndex + 1;
-        if (index == players.size()) {
+        Player next_player = screen.getGame().getPlayers().get(this.index);
+
+        if (next_player == suggesting_player) {
+            this.screen.getStage().addActor(ClueMain.END_BUTTON_CLICK_INDICATOR);
+            this.index = -1;
+            return;//done
+        }
+
+        if (next_player == screen.getYourPlayer()) {
+
+            if (!next_player.isHoldingCardInSuggestion(suggestion)) {
+                String text = "You are not holding any of the cards suggested by " + suggesting_player.getSuspect().title();
+                screen.addMessage(text, next_player.getSuspect().color());
+            } else {
+                PickCardToShowDialog dialog = new PickCardToShowDialog(screen, this, screen.getYourPlayer(), next_player, suggestion, suggestion_text);
+                dialog.show(screen.getStage());
+            }
+
+        } else {
+
+            List<Card> cards_in_hand = next_player.getCardsInHand();
+            List<Card> cards_in_hand_matching_one_of_three_suggested_cards = new ArrayList<>();
+
+            for (Card card : suggestion) {
+                if (cards_in_hand.contains(card)) {
+                    cards_in_hand_matching_one_of_three_suggested_cards.add(card);
+                }
+            }
+
+            if (cards_in_hand_matching_one_of_three_suggested_cards.size() > 0) {
+
+                int picked = new Random().nextInt(cards_in_hand_matching_one_of_three_suggested_cards.size());
+                card_to_show = cards_in_hand_matching_one_of_three_suggested_cards.get(picked);
+
+                String text = next_player.getSuspect().title() + " is showing the \"" + card_to_show + "\" card to you.";
+                if (suggesting_player != screen.getYourPlayer()) {
+                    text = next_player.getSuspect().title() + " is showing a card to " + suggesting_player.getSuspect().title() + ".";
+                }
+
+                screen.addMessage(text, suggesting_player.getSuspect().color());
+                screen.addMessage(suggestion_text, suggesting_player.getSuspect().color());
+
+                if (suggesting_player.isComputerPlayer()) {
+                    suggesting_player.getNotebook().setToggled(card_to_show);
+                }
+            } else {
+                screen.addMessage(next_player.getSuspect().title() + " does not have a card to show.", next_player.getSuspect().color());
+            }
+
+            SequenceAction seq = Actions.action(SequenceAction.class);
+            seq.addAction(Actions.delay(1f));
+            seq.addAction(Actions.run(new Runnable() {
+                public void run() {
+                    showCards();
+                }
+            }));
+            screen.getStage().addAction(seq);
+
+        }
+
+        index++;
+        if (index == screen.getGame().getPlayers().size()) {
             index = 0;
         }
 
-        while (card_to_show == null && index < players.size()) {
+    }
 
-            Player next_player = players.get(index);
-            if (next_player == suggesting_player) {
-                break;//done
-            }
-
-            if (next_player == your_player) {
-
-                if (!next_player.isHoldingCardInSuggestion(suggestion)) {
-                    //nothing
-                } else {
-                    //PickCardsToShowDialog2 dialog = new PickCardsToShowDialog2(suggestion, suggestion_text, next_player);
-                    //card_to_show = (Card) dialog.showDialog();
-                }
-
-            } else {
-
-                List<Card> cards_in_hand = next_player.getCardsInHand();
-
-                for (Card card : suggestion) {
-                    if (cards_in_hand.contains(card)) {
-
-                        String text = next_player.toString() + "\nis showing the\n" + card + " card.";
-                        if (suggesting_player != your_player) {
-                            text = next_player.toString() + "\nis showing a card\nto " + suggesting_player.toString();
-                        }
-
-                        text = text + "\n\n" + suggestion_text;
-
-                        //ShowCardDialog2 dialog = new ShowCardDialog2(text);
-                        //dialog.setVisible(true);
-
-                        card_to_show = card;
-                        break;
-                    }
-                }
-
-            }
-
-            if (card_to_show != null) {
-                break;
-            }
-
-            index++;
-            if (index == players.size()) {
-                index = 0;
-            }
-
-            //ShowCardDialog2 dialog = new ShowCardDialog2(next_player.toString() + "\ndoes not have\na card to show.");
-            //dialog.setVisible(true);
-
-        }
-
-        if (card_to_show == null) {
-            //ShowCardDialog2 dialog = new ShowCardDialog2("No one has a\ncard to show.");
-            //dialog.setVisible(true);
-        } else {
-            //set the card as toggled in their notebook
-            if (suggesting_player.isComputerPlayer()) {
-                suggesting_player.getNotebook().setToggled(card_to_show);
-            }
-        }
-
+    public boolean isDone() {
+        return this.index == -1;
     }
 
 }

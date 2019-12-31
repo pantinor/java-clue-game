@@ -27,7 +27,22 @@ public class Player {
     }
 
     public void setLocation(Location location) {
+        
+        if (location == null) {
+            return;
+        }
+        
+        //reset the height back to 100
+        if (this.location != null) {
+            this.location.setHeight(100);
+        }
+        
         this.location = location;
+        
+        //allow multiple players on a room tile but block regular tiles with one player
+        if (!this.location.isRoom()) {
+            this.location.setHeight(1000);
+        }
     }
 
     public Location getLocation() {

@@ -14,8 +14,8 @@ public class ClueMap {
     private int hbound = 0;
     private int vbound = 0;
 
-    private static final String TEMPLATE = 
-              "xxxxxxxxxoxxxoxxxxxxxxxx\n"
+    private static final String TEMPLATE
+            = "xxxxxxxxxoxxxoxxxxxxxxxx\n"
             + "xxxxxxxoooxxxoooxxxxxxxx\n"
             + "xxxxxxooxxxxxxxooxxxxxxx\n"
             + "xxxxxxooxxxxxxxooxxxxxxx\n"
@@ -147,7 +147,7 @@ public class ClueMap {
         return rooms;
     }
 
-    public List<Location> getAllDoorLocationsForRoom(int roomId) {
+    private List<Location> getAllDoorLocationsForRoom(int roomId) {
         if (roomId == -1) {
             return null;
         }
@@ -170,7 +170,7 @@ public class ClueMap {
 
         List<Location> doors = getAllDoorLocationsForRoom(starting_location.getRoomId());
 
-        if (doors == null) {
+        if (doors == null) {//not in a room
             for (Location loc : locs) {
                 List<Location> path2 = pathfinder.findPath(locs, starting_location, Collections.singleton(loc));
                 if (path2 != null && path2.size() == dice_roll + 1) {
@@ -184,7 +184,7 @@ public class ClueMap {
                     choices.add(l);
                 }
             }
-        } else {
+        } else { //in a room
             for (Location door : doors) {
                 for (Location loc : locs) {
                     List<Location> path2 = pathfinder.findPath(locs, door, Collections.singleton(loc));

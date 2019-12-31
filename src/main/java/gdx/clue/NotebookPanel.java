@@ -4,14 +4,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import static gdx.clue.Card.*;
-import gdx.clue.ClueMain.Suspect;
 import static gdx.clue.ClueMain.TILE_DIM;
 
 public class NotebookPanel {
@@ -32,11 +30,12 @@ public class NotebookPanel {
 
         this.pane = new ScrollPane(this.table, ClueMain.skin);
         
-        this.table.add(new Image(notebook.getPlayer().getSuspect().icon()));
-        this.table.row();
-        this.table.add(new Label(notebook.getPlayer().getPlayerName().toUpperCase() + "'S CLUES", ClueMain.skin));
+        this.table.add(new Label("Your Detective Notebook", ClueMain.skin));
         this.table.row();
         this.table.add(new Label("(blue = your cards in hand)", ClueMain.skin, "default-blue"));
+        this.table.row();
+        this.table.add(new Label("When shown a card in game,", ClueMain.skin));
+        this.table.add(new Label("mark it off below.", ClueMain.skin));
 
         this.table.row();
         this.table.add(new Label("", ClueMain.skin));

@@ -8,7 +8,6 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -56,7 +55,7 @@ public class ClueMain extends Game {
         ROOMS = new Texture(Gdx.files.classpath("room-sheet.png"));
         DICE_TEXTURES = TextureRegion.split(new Texture(Gdx.files.classpath("DiceSheet.png")), 56, 56);
 
-        TILE_BROWN = createSquare(Color.FIREBRICK, Color.BROWN, TILE_DIM, TILE_DIM);
+        TILE_BROWN = createSquare(Color.TAN, Color.YELLOW, TILE_DIM, TILE_DIM);
         TILE_LIGHT_GRAY = createSquare(Color.LIGHT_GRAY, Color.GRAY, TILE_DIM, TILE_DIM);
         TILE_DARK_GREEN = createSquare(Color.GREEN, Color.FOREST, TILE_DIM, TILE_DIM);
 
@@ -84,7 +83,7 @@ public class ClueMain extends Game {
     public static enum Suspect {
 
         SCARLET("MsScarlett1.png", Color.RED, 0, "Miss Scarlet", 7, 24),
-        WHITE("MrsWhite1.png", Color.ORANGE, 1, "Mrs. White", 9, 0),
+        WHITE("MrsWhite1.png", Color.TEAL, 1, "Mrs. White", 9, 0),
         PLUM("ProfPlum1.png", Color.PURPLE, 2, "Professor Plum", 23, 18),
         MUSTARD("ColMustard1.png", Color.GOLDENROD, 3, "Colonel Mustard", 0, 17),
         GREEN("MrGreen1.png", Color.FOREST, 4, "Mr. Green", 13, 0),

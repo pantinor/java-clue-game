@@ -1,6 +1,5 @@
 package gdx.clue.astar;
 
-import com.badlogic.gdx.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,17 +88,20 @@ public class Location implements Node<Location> {
         double b = dest.y - y;
         return Math.sqrt(a * a + b * b);
     }
-
+    
+    @Override
     public double pathCostEstimate(Location goal) {
         return getDistance(goal) * 0.99;
     }
-
+    
+    @Override
     public double traverseCost(Location target) {
         double distance = getDistance(target);
         double diff = target.getHeight() - getHeight();
         return Math.abs(diff) + distance;
     }
-
+    
+    @Override
     public Iterable<Location> neighbors() {
         List<Location> realNeighbors = new ArrayList<>();
         if (!blocked) {

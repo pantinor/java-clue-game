@@ -1,6 +1,5 @@
 package gdx.clue.astar;
 
-import org.antinori.astar.*;
 import com.google.common.collect.Ordering;
 import java.util.Map;
 

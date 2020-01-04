@@ -13,6 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.Random;
 
 import gdx.clue.astar.Location;
+import java.util.Collections;
+import java.util.List;
 
 public class Notebook {
 
@@ -99,24 +101,43 @@ public class Notebook {
 
         for (int i = 0; i < total; i++) {
             Card card = new Card(type, i);
-            if (isCardInHand(card) || isCardToggled(card)) {
-                continue;
+            if (!isCardInHand(card) && !isCardToggled(card)) {
+                picks.add(card);
             }
-            picks.add(card);
         }
 
-        if (picks.size() > 1) {
-            int r = new Random().nextInt(picks.size());
-            picked_card = picks.get(r);
-        } else if (picks.size() == 1) {
-            picked_card = picks.get(0);
-        } else {
-            //just return a random card of this type
-            int r = new Random().nextInt(total);
-            picked_card = new Card(type, r);
-        }
+        Collections.shuffle(picks);
+
+        picked_card = picks.get(0);
 
         return picked_card;
+    }
+
+    public boolean canMakeAccusation() {
+
+        int scount = 0;
+        for (int i = 0; i < NUM_SUSPECTS; i++) {
+            Card card = new Card(TYPE_SUSPECT, i);
+            if (!isCardInHand(card) && !isCardToggled(card)) {
+                scount++;
+            }
+        }
+        int wcount = 0;
+        for (int i = 0; i < NUM_WEAPONS; i++) {
+            Card card = new Card(TYPE_WEAPON, i);
+            if (!isCardInHand(card) && !isCardToggled(card)) {
+                wcount++;
+            }
+        }
+        int lcount = 0;
+        for (int i = 0; i < NUM_ROOMS; i++) {
+            Card card = new Card(TYPE_ROOM, i);
+            if (!isCardInHand(card) && !isCardToggled(card)) {
+                lcount++;
+            }
+        }
+
+        return scount <= 2 && wcount <= 2 && lcount <= 2;
     }
 
     public Player getPlayer() {

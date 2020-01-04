@@ -1,5 +1,6 @@
 package gdx.clue;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import static gdx.clue.Card.*;
@@ -93,9 +94,11 @@ public class ShowCardsRoutine {
             Sounds.play(Sound.LAUGH);
             
             //if no one was able to show any cards after full round 
-            //then it may be possible to make accusation
+            //then it is possible to make the accusation with this suggestion
             if (next_player.isComputerPlayer()) {
                 screen.makeAccusation(next_player, suggestion);
+            } else {
+                screen.addMessage("You may make an accusation!", Color.PINK);
             }
             
             return;//done

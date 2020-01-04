@@ -468,17 +468,28 @@ public class GameScreen implements Screen, InputProcessor {
 
             Location startingLocation = player.getLocation();
 
-            Location newLocation = getNextComputerPlayerLocation(player);
+            Card currentRoomCard = startingLocation.isRoom() ? new Card(TYPE_ROOM, startingLocation.getRoomId()) : null;
 
-            this.map.resetHighlights();
-
-            boolean justEnteredRoom = !startingLocation.isRoom() && newLocation.isRoom();
-
-            if (!justEnteredRoom && newLocation.isRoom()) {
+            //make a suggestion if the room they are in is not toggled and they did not just enter into a room
+            if (startingLocation.isRoom() && !player.getNotebook().isLocationCardInHandOrToggled(currentRoomCard)) {
                 makeSuggestionComputerPlayer(player);
             } else {
-                ClueMain.END_BUTTON.setVisible(true);
+
+                if (startingLocation.isRoom() && player.getNotebook().isLocationCardInHandOrToggled(currentRoomCard)) {
+                    Sounds.play(Sound.HMM);
+                    //indicates maybe your player should pay attention that this room 
+                    //is in their hand and you may be able to mark it off in your notebook
+                    //but you don't know if the card that was shown was a room card earlier so its not a sure thing
+                    addMessage(player.getSuspect().title() + " is leaving the " + currentRoomCard, player.getSuspect().color());
+                }
+
+                //move them
+                Location newLocation = getNextComputerPlayerLocation(player);
+                
+                this.map.resetHighlights();
             }
+
+            ClueMain.END_BUTTON.setVisible(true);
 
         } else {
 
@@ -497,10 +508,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         Location new_location = null;
 
-        // try move the player to the room which is not in their cards or toggled in their notbeook
+        // try move the player to the room which is not in their cards or toggled in their notebook
         Location currentLocation = player.getLocation();
-
-        boolean isInRoom = currentLocation.getRoomId() != -1;
 
         List<Location> rooms = map.getAllRoomLocations();
 
@@ -517,37 +526,28 @@ public class GameScreen implements Screen, InputProcessor {
 
         List<Location> reachableLocations = map.highlightReachablePaths(currentLocation, this.pathfinder, roll);
 
-        if (isInRoom) {
-
-            // secret passage linkages
+        // secret passage linkages
+        if (currentLocation.isRoom()) {
             if (currentLocation.getRoomId() == ROOM_KITCHEN) {
                 if (!player.getNotebook().isLocationCardInHandOrToggled(new Card(TYPE_ROOM, ROOM_STUDY))) {
                     reachableLocations.add(map.getRoomLocation(ROOM_STUDY));
                 }
             }
-
             if (currentLocation.getRoomId() == ROOM_STUDY) {
                 if (!player.getNotebook().isLocationCardInHandOrToggled(new Card(TYPE_ROOM, ROOM_KITCHEN))) {
                     reachableLocations.add(map.getRoomLocation(ROOM_KITCHEN));
                 }
             }
-
             if (currentLocation.getRoomId() == ROOM_CONSERVATORY) {
                 if (!player.getNotebook().isLocationCardInHandOrToggled(new Card(TYPE_ROOM, ROOM_LOUNGE))) {
                     reachableLocations.add(map.getRoomLocation(ROOM_LOUNGE));
                 }
             }
-
             if (currentLocation.getRoomId() == ROOM_LOUNGE) {
                 if (!player.getNotebook().isLocationCardInHandOrToggled(new Card(TYPE_ROOM, ROOM_CONSERVATORY))) {
                     reachableLocations.add(map.getRoomLocation(ROOM_CONSERVATORY));
                 }
             }
-
-            if (!player.getNotebook().isLocationCardInHandOrToggled(currentLocation)) {
-                reachableLocations.add(currentLocation);
-            }
-
         }
 
         Collections.shuffle(rooms);
@@ -561,6 +561,7 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
+        //move to a closest room which is potential
         if (new_location == null) {
             int closest = 100;
             // find a room location which is closest to them which is not in their hand or toggled
@@ -591,8 +592,6 @@ public class GameScreen implements Screen, InputProcessor {
 
         Card selected_suspect_card = player.getNotebook().randomlyPickCardOfType(TYPE_SUSPECT);
         Card selected_weapon_card = player.getNotebook().randomlyPickCardOfType(TYPE_WEAPON);
-
-        // the room they are in
         Card selected_room_card = new Card(TYPE_ROOM, location.getRoomId());
 
         List<Card> suggestion = new ArrayList<>();

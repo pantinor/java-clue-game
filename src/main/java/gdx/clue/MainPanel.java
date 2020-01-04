@@ -53,8 +53,8 @@ public class MainPanel {
         ClueMain.END_BUTTON.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                Sounds.play(Sound.BUTTON);
                 ClueMain.END_BUTTON.setVisible(false);
+                Sounds.play(Sound.BUTTON);
                 screen.turn(screen.nextPlayer());
             }
         });

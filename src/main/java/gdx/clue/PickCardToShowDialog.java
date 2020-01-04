@@ -37,9 +37,9 @@ public class PickCardToShowDialog extends Window {
     private final List<CardCheckBox> checkBoxes = new ArrayList<>();
 
     public PickCardToShowDialog(
-            final GameScreen screen, final ShowCardsRoutine showCards, Player showingPlayer, 
+            final GameScreen screen, final ShowCardsRoutine showCards, Player showingPlayer,
             final Player suggestingPlayer, List<Card> suggestion, String suggestionText) {
-        
+
         super("Pick which card you will show for the suggestion", ClueMain.skin.get("dialog", Window.WindowStyle.class));
         this.screen = screen;
 
@@ -97,6 +97,8 @@ public class PickCardToShowDialog extends Window {
                             Sounds.play(Sound.POSITIVE_EFFECT);
                             ClueMain.END_BUTTON.setVisible(true);
                             showCards.reset();
+                            String text = showingPlayer.getSuspect().title() + " is showing the \"" + cb.getCard() + "\" card to " + suggestingPlayer.getSuspect().title();
+                            screen.addMessage(text, showingPlayer.getSuspect().color());
                         }
                     }
                 }

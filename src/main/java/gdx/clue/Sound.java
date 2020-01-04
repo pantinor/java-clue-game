@@ -9,6 +9,7 @@ public enum Sound {
     CREAK("creaking-door-2.wav", false, 0.3f),
     DICE("dice.wav", false, 0.3f),
     LAUGH("laugha.wav", false, 0.3f),
+    HMM("hmm.wav", false, 0.3f),
     NEGATIVE_EFFECT("NegativeEffect.ogg", false, 0.3f),
     POSITIVE_EFFECT("PositiveEffect.ogg", false, 0.3f);
    
